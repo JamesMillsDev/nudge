@@ -705,7 +705,7 @@ namespace Nudge
 	 * @param rhs The vector to multiply (passed by value)
 	 * @return The scaled vector
 	 */
-	Float2& operator*=(const float lhs, Float2 rhs)
+	Float2& operator*=(const float lhs, Float2& rhs)
 	{
 		rhs.x *= lhs;
 		rhs.y *= lhs;

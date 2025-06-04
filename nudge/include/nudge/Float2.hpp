@@ -355,5 +355,5 @@ namespace Nudge
 	 * @param rhs The vector to multiply
 	 * @return The scaled vector
 	 */
-	Float2& operator*=(float lhs, Float2 rhs);
+	Float2& operator*=(float lhs, Float2& rhs);
 }
