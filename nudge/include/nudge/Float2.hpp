@@ -191,11 +191,6 @@ namespace Nudge
 		 */
 		Float2(const Float2& rhs);
 
-		/**
-		 * @brief Move constructor (deleted to prevent accidental moves).
-		 */
-		Float2(Float2&&) noexcept = delete;
-
 	public:
 		// Instance Methods
 
@@ -342,11 +337,6 @@ namespace Nudge
 		 * @return Reference to this vector after assignment
 		 */
 		Float2& operator=(const Float2& rhs);
-
-		/**
-		 * @brief Move assignment operator (deleted to prevent accidental moves).
-		 */
-		Float2 operator=(Float2&&) noexcept = delete;
 	};
 
 	// Global Operators
