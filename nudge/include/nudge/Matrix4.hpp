@@ -2,5 +2,8 @@
 
 namespace Nudge
 {
-
+	class Matrix4
+	{
+		
+	};
 }

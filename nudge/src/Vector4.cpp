@@ -1,63 +1,64 @@
 ﻿/**
- * @file Float3.cpp
- * @brief Implementation of the Float3 class for 3D vector mathematics.
+ * @file Vector4.cpp
+ * @brief Implementation of the Vector4 class for 4D vector mathematics.
  *
- * This file contains the implementation of all Float3 class methods including
+ * This file contains the implementation of all Vector4 class methods including
  * mathematical operations, utility functions, constructors, and operators.
  */
 
-#include "nudge/Float3.hpp"
+#include "Nudge/Vector4.hpp"
 
 #include <format>
 
-#include "nudge/Float2.hpp"
-#include "nudge/Float4.hpp"
-#include "nudge/MathF.hpp"
+#include "Nudge/MathF.hpp"
+#include "Nudge/Vector2.hpp"
+#include "Nudge/Vector3.hpp"
 
 using std::runtime_error;
 
 namespace Nudge
 {
 	/**
-	 * Calculates the dot product of two Float3 vectors
+	 * Calculates the dot product of two Vector4 vectors
 	 * @param lhs Left-hand side vector
 	 * @param rhs Right-hand side vector
 	 * @return The dot product as a scalar value
 	 */
-	float Float3::Dot(const Float3& lhs, const Float3& rhs)
+	float Vector4::Dot(const Vector4& lhs, const Vector4& rhs)
 	{
-		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z;
+		return lhs.x * rhs.x + lhs.y * rhs.y + lhs.z * rhs.z + lhs.w * rhs.w;
 	}
 
 	/**
-	 * Calculates the Euclidean distance between two Float3 points
+	 * Calculates the Euclidean distance between two Vector4 points
 	 * @param lhs First point
 	 * @param rhs Second point
 	 * @return The distance between the two points
 	 */
-	float Float3::Distance(const Float3& lhs, const Float3& rhs)
+	float Vector4::Distance(const Vector4& lhs, const Vector4& rhs)
 	{
 		return sqrtf(DistanceSqr(lhs, rhs));
 	}
 
 	/**
-	 * Calculates the squared distance between two Float3 points
+	 * Calculates the squared distance between two Vector4 points
 	 * More efficient than Distance() when you only need to compare distances
 	 * @param lhs First point
 	 * @param rhs Second point
 	 * @return The squared distance between the two points
 	 */
-	float Float3::DistanceSqr(const Float3& lhs, const Float3& rhs)
+	float Vector4::DistanceSqr(const Vector4& lhs, const Vector4& rhs)
 	{
 		return (lhs - rhs).MagnitudeSqr();
 	}
 
 	/**
-	 * Calculates the angle of a vector from the positive Z-axis
+	 * Calculates the angle of a vector from the positive Z-axis (using only x, y, z components)
+	 * Note: This treats the Vector4 as a 3D vector for angle calculation, ignoring the w component
 	 * @param vec The vector to calculate the angle for
 	 * @return The angle in radians
 	 */
-	float Float3::AngleOf(const Float3& vec)
+	float Vector4::AngleOf(const Vector4& vec)
 	{
 		const float mag = vec.Magnitude();
 
@@ -75,7 +76,7 @@ namespace Nudge
 	 * @param rhs Second vector
 	 * @return The angle between the vectors in radians
 	 */
-	float Float3::AngleBetween(const Float3& lhs, const Float3& rhs)
+	float Vector4::AngleBetween(const Vector4& lhs, const Vector4& rhs)
 	{
 		const float dot = Dot(lhs, rhs);
 		const float lengths = lhs.Magnitude() * rhs.Magnitude();
@@ -93,13 +94,13 @@ namespace Nudge
 	}
 
 	/**
-	 * Performs linear interpolation between two Float3 vectors
+	 * Performs linear interpolation between two Vector4 vectors
 	 * @param a Start vector
 	 * @param b End vector
 	 * @param t Interpolation factor (0.0 to 1.0)
 	 * @return The interpolated vector
 	 */
-	Float3 Float3::Lerp(const Float3& a, const Float3& b, float t)
+	Vector4 Vector4::Lerp(const Vector4& a, const Vector4& b, float t)
 	{
 		t = MathF::Clamp01(t);
 
@@ -112,24 +113,26 @@ namespace Nudge
 	 * @param norm The surface normal vector
 	 * @return The reflected direction vector
 	 */
-	Float3 Float3::Reflect(const Float3& inDirection, const Float3& norm)
+	Vector4 Vector4::Reflect(const Vector4& inDirection, const Vector4& norm)
 	{
 		return inDirection - 2 * norm * Dot(inDirection, norm);
 	}
 
 	/**
-	 * Calculates the cross product of two Float3 vectors
+	 * Calculates the cross product treating Vector4 as 3D vectors (ignoring w component)
+	 * The resulting w component is set to 0
 	 * @param lhs Left-hand side vector
 	 * @param rhs Right-hand side vector
-	 * @return The cross product vector perpendicular to both input vectors
+	 * @return The cross product vector with w = 0
 	 */
-	Float3 Float3::Cross(const Float3& lhs, const Float3& rhs)
+	Vector4 Vector4::Cross(const Vector4& lhs, const Vector4& rhs)
 	{
-		return Float3
+		return Vector4
 		{
 			lhs.y * rhs.z - lhs.z * rhs.y,
 			lhs.z * rhs.x - lhs.x * rhs.z,
-			lhs.x * rhs.y - lhs.y * rhs.x
+			lhs.x * rhs.y - lhs.y * rhs.x,
+			0.f
 		};
 	}
 
@@ -137,22 +140,34 @@ namespace Nudge
 	 * Returns a vector with the minimum components of two vectors
 	 * @param lhs First vector
 	 * @param rhs Second vector
-	 * @return Vector with minimum x, y, z components
+	 * @return Vector with minimum x, y, z, w components
 	 */
-	Float3 Float3::Min(const Float3& lhs, const Float3& rhs)
+	Vector4 Vector4::Min(const Vector4& lhs, const Vector4& rhs)
 	{
-		return Float3{ fminf(lhs.x, rhs.x), fminf(lhs.y, rhs.y), fminf(lhs.z, rhs.z) };
+		return Vector4
+		{
+			fminf(lhs.x, rhs.x),
+			fminf(lhs.y, rhs.y),
+			fminf(lhs.z, rhs.z),
+			fminf(lhs.w, rhs.w)
+		};
 	}
 
 	/**
 	 * Returns a vector with the maximum components of two vectors
 	 * @param lhs First vector
 	 * @param rhs Second vector
-	 * @return Vector with maximum x, y, z components
+	 * @return Vector with maximum x, y, z, w components
 	 */
-	Float3 Float3::Max(const Float3& lhs, const Float3& rhs)
+	Vector4 Vector4::Max(const Vector4& lhs, const Vector4& rhs)
 	{
-		return Float3{ fmaxf(lhs.x, rhs.x), fmaxf(lhs.y, rhs.y), fmaxf(lhs.z, rhs.z) };
+		return Vector4
+		{
+			fmaxf(lhs.x, rhs.x),
+			fmaxf(lhs.y, rhs.y),
+			fmaxf(lhs.z, rhs.z),
+			fmaxf(lhs.w, rhs.w)
+		};
 	}
 
 	/**
@@ -162,75 +177,76 @@ namespace Nudge
 	 * @param max Maximum bounds vector
 	 * @return The clamped vector
 	 */
-	Float3 Float3::Clamp(const Float3& value, const Float3& min, const Float3& max)
+	Vector4 Vector4::Clamp(const Vector4& value, const Vector4& min, const Vector4& max)
 	{
-		return Float3
+		return Vector4
 		{
 			MathF::Clamp(value.x, min.x, max.x),
 			MathF::Clamp(value.y, min.y, max.y),
-			MathF::Clamp(value.z, min.z, max.z)
+			MathF::Clamp(value.z, min.z, max.z),
+			MathF::Clamp(value.w, min.w, max.w)
 		};
 	}
 
 	/**
-	 * Returns a zero vector (0, 0, 0)
+	 * Returns a zero vector (0, 0, 0, 0)
 	 * @return Zero vector
 	 */
-	Float3 Float3::Zero()
+	Vector4 Vector4::Zero()
 	{
-		return Float3{ 0.f };
+		return Vector4{ 0.f };
 	}
 
 	/**
-	 * Returns a vector with all components set to 1 (1, 1, 1)
+	 * Returns a vector with all components set to 1 (1, 1, 1, 1)
 	 * @return One vector
 	 */
-	Float3 Float3::One()
+	Vector4 Vector4::One()
 	{
-		return Float3{ 1.f };
+		return Vector4{ 1.f };
 	}
 
 	/**
-	 * Returns a vector with all components set to 0.5 (0.5, 0.5, 0.5)
+	 * Returns a vector with all components set to 0.5 (0.5, 0.5, 0.5, 0.5)
 	 * @return Half vector
 	 */
-	Float3 Float3::Half()
+	Vector4 Vector4::Half()
 	{
-		return Float3{ .5f };
+		return Vector4{ .5f };
 	}
 
 	/**
-	 * Returns the unit vector along the X-axis (1, 0, 0)
+	 * Returns the unit vector along the X-axis (1, 0, 0, 0)
 	 * @return Unit X vector
 	 */
-	Float3 Float3::UnitX()
+	Vector4 Vector4::UnitX()
 	{
-		return Float3{ 1.f, 0.f, 0.f };
+		return Vector4{ 1.f, 0.f, 0.f, 0.f };
 	}
 
 	/**
-	 * Returns the unit vector along the Y-axis (0, 1, 0)
+	 * Returns the unit vector along the Y-axis (0, 1, 0, 0)
 	 * @return Unit Y vector
 	 */
-	Float3 Float3::UnitY()
+	Vector4 Vector4::UnitY()
 	{
-		return Float3{ 0.f, 1.f, 0.f };
+		return Vector4{ 0.f, 1.f, 0.f, 0.f };
 	}
 
 	/**
-	 * Returns the unit vector along the Z-axis (0, 0, 1)
+	 * Returns the unit vector along the Z-axis (0, 0, 1, 0)
 	 * @return Unit Z vector
 	 */
-	Float3 Float3::UnitZ()
+	Vector4 Vector4::UnitZ()
 	{
-		return Float3{ 0.f, 0.f, 1.f };
+		return Vector4{ 0.f, 0.f, 1.f, 0.f };
 	}
 
 	/**
 	 * Default constructor - initializes to zero vector
 	 */
-	Float3::Float3()
-		: Float3{ 0.f }
+	Vector4::Vector4()
+		: Vector4{ 0.f }
 	{
 	}
 
@@ -238,55 +254,56 @@ namespace Nudge
 	 * Constructor that sets all components to the same scalar value
 	 * @param scalar Value to set for all components
 	 */
-	Float3::Float3(float scalar)
-		: Float3{ scalar, scalar, scalar }
+	Vector4::Vector4(float scalar)
+		: Vector4{ scalar, scalar, scalar, scalar }
 	{
 	}
 
 	/**
-	 * Constructor from Float2 - Z component is set to 0
-	 * @param vec Float2 vector to convert
+	 * Constructor from Vector2 - Z and W components are set to 0
+	 * @param vec Vector2 to convert
 	 */
-	Float3::Float3(const Float2& vec)
-		: Float3{ vec.x, vec.y, 0.f }
+	Vector4::Vector4(const Vector2& vec)
+		: Vector4{ vec.x, vec.y, 0.f, 0.f }
 	{
 	}
 
 	/**
-	 * Constructor from Float4 - W component is discarded
-	 * @param vec Float4 vector to convert
+	 * Constructor from Vector3 - W component is set to 0
+	 * @param vec Vector3 to convert
 	 */
-	Float3::Float3(const Float4& vec)
-		: Float3{ /*vec.x, vec.y, vec.z*/ }
+	Vector4::Vector4(const Vector3& vec)
+		: Vector4{ vec.x, vec.y, vec.z, 0.f }
 	{
 	}
 
 	/**
-	 * Constructor with explicit x, y, z components
+	 * Constructor with explicit x, y, z, w components
 	 * @param x X component
 	 * @param y Y component
 	 * @param z Z component
+	 * @param w W component
 	 */
-	Float3::Float3(const float x, const float y, const float z)
-		: x{ x }, y{ y }, z{ z }
+	Vector4::Vector4(float x, float y, float z, float w)
+		: x{ x }, y{ y }, z{ z }, w{ w }
 	{
 	}
 
 	/**
 	 * Constructor from array of floats
-	 * @param values Array containing x, y, z values
+	 * @param values Array containing x, y, z, w values
 	 */
-	Float3::Float3(float values[3])
-		: Float3{ values[0], values[1], values[2] }
+	Vector4::Vector4(float values[4])
+		: Vector4{ values[0], values[1], values[2], values[3] }
 	{
 	}
 
 	/**
 	 * Copy constructor
-	 * @param rhs Float3 to copy from
+	 * @param rhs Vector4 to copy from
 	 */
-	Float3::Float3(const Float3& rhs)
-		: x{ rhs.x }, y{ rhs.y }, z{ rhs.z }
+	Vector4::Vector4(const Vector4& rhs)
+		: x{ rhs.x }, y{ rhs.y }, z{ rhs.z }, w{ rhs.w }
 	{
 	}
 
@@ -294,7 +311,7 @@ namespace Nudge
 	 * Calculates the magnitude (length) of this vector
 	 * @return The magnitude of the vector
 	 */
-	float Float3::Magnitude() const
+	float Vector4::Magnitude() const
 	{
 		return sqrtf(MagnitudeSqr());
 	}
@@ -304,21 +321,22 @@ namespace Nudge
 	 * More efficient than Magnitude() when you only need to compare lengths
 	 * @return The squared magnitude of the vector
 	 */
-	float Float3::MagnitudeSqr() const
+	float Vector4::MagnitudeSqr() const
 	{
-		return x * x + y * y + z * z;
+		return x * x + y * y + z * z + w * w;
 	}
 
 	/**
 	 * Normalizes this vector to unit length (modifies the original vector)
 	 */
-	void Float3::Normalize()
+	void Vector4::Normalize()
 	{
 		if (const float mag = Magnitude(); mag > 0.f)
 		{
 			x /= mag;
 			y /= mag;
 			z /= mag;
+			w /= mag;
 		}
 		else
 		{
@@ -326,6 +344,7 @@ namespace Nudge
 			x = 0.f;
 			y = 0.f;
 			z = 0.f;
+			w = 0.f;
 		}
 	}
 
@@ -333,47 +352,47 @@ namespace Nudge
 	 * Returns a normalized copy of this vector (original vector unchanged)
 	 * @return A normalized version of this vector
 	 */
-	Float3 Float3::Normalized() const
+	Vector4 Vector4::Normalized() const
 	{
 		const float mag = Magnitude();
 
-		return mag > 0.f ? Float3{ x / mag, y / mag, z / mag } : Float3{ 0.f };
+		return mag > 0.f ? Vector4{ x / mag, y / mag, z / mag, w / mag } : Vector4{ 0.f };
 	}
 
 	/**
 	 * Checks if this vector is approximately zero
 	 * @return True if all components are near zero
 	 */
-	bool Float3::IsZero() const
+	bool Vector4::IsZero() const
 	{
-		return MathF::IsNearZero(x) && MathF::IsNearZero(y) && MathF::IsNearZero(z);
+		return MathF::IsNearZero(x) && MathF::IsNearZero(y) && MathF::IsNearZero(z) && MathF::IsNearZero(w);
 	}
 
 	/**
-	 * Checks if this vector has unit length (magnitude approximately 1)
+	 * Checks if this vector has unit length (magnitude approx 1)
 	 * @return True if the vector has unit length
 	 */
-	bool Float3::IsUnit() const
+	bool Vector4::IsUnit() const
 	{
 		return MathF::Compare(Magnitude(), 1.f);
 	}
 
 	/**
 	 * Returns a string representation of this vector
-	 * @return String in format "(x, y, z)"
+	 * @return String in format "(x, y, z, w)"
 	 */
-	string Float3::ToString() const
+	string Vector4::ToString() const
 	{
-		return std::format("({}, {}, {})", x, y, z);
+		return std::format("({}, {}, {}, {})", x, y, z, w);
 	}
 
 	/**
-	 * Stream output operator for Float3
+	 * Stream output operator for Vector4
 	 * @param stream Output stream
 	 * @param vec Vector to output
 	 * @return Reference to the stream
 	 */
-	ostream& operator<<(ostream& stream, const Float3& vec)
+	ostream& operator<<(ostream& stream, const Vector4& vec)
 	{
 		stream << vec.ToString();
 
@@ -385,19 +404,22 @@ namespace Nudge
 	 * @param rhs Vector to compare with
 	 * @return True if vectors are approximately equal
 	 */
-	bool Float3::operator==(const Float3& rhs) const
+	bool Vector4::operator==(const Vector4& rhs) const
 	{
-		return MathF::Compare(x, rhs.x) && MathF::Compare(y, rhs.y) && MathF::Compare(z, rhs.z);
+		return MathF::Compare(x, rhs.x) && MathF::Compare(y, rhs.y) &&
+			MathF::Compare(z, rhs.z) && MathF::Compare(w, rhs.w);
 	}
 
 	/**
 	 * Inequality comparison operator
+	 * Note: There appears to be a logical error in the original implementation
 	 * @param rhs Vector to compare with
 	 * @return True if vectors are not approximately equal
 	 */
-	bool Float3::operator!=(const Float3& rhs) const
+	bool Vector4::operator!=(const Vector4& rhs) const
 	{
-		return !MathF::Compare(x, rhs.x) || !MathF::Compare(y, rhs.y) || !MathF::Compare(z, rhs.z);
+		return !MathF::Compare(x, rhs.x) || !MathF::Compare(y, rhs.y) ||
+			!MathF::Compare(z, rhs.z) || !MathF::Compare(w, rhs.w);
 	}
 
 	/**
@@ -405,9 +427,9 @@ namespace Nudge
 	 * @param rhs Vector to add
 	 * @return Sum of the two vectors
 	 */
-	Float3 Float3::operator+(const Float3& rhs) const
+	Vector4 Vector4::operator+(const Vector4& rhs) const
 	{
-		return Float3{ x + rhs.x, y + rhs.y, z + rhs.z };
+		return Vector4{ x + rhs.x, y + rhs.y, z + rhs.z, w + rhs.w };
 	}
 
 	/**
@@ -415,7 +437,7 @@ namespace Nudge
 	 * @param rhs Vector to add to this vector
 	 * @return Reference to this vector after addition
 	 */
-	Float3& Float3::operator+=(const Float3& rhs)
+	Vector4& Vector4::operator+=(const Vector4& rhs)
 	{
 		if (*this == rhs)
 		{
@@ -425,6 +447,7 @@ namespace Nudge
 		x += rhs.x;
 		y += rhs.y;
 		z += rhs.z;
+		w += rhs.w;
 
 		return *this;
 	}
@@ -434,9 +457,9 @@ namespace Nudge
 	 * @param rhs Vector to subtract
 	 * @return Difference of the two vectors
 	 */
-	Float3 Float3::operator-(const Float3& rhs) const
+	Vector4 Vector4::operator-(const Vector4& rhs) const
 	{
-		return Float3{ x - rhs.x, y - rhs.y, z - rhs.z };
+		return Vector4{ x - rhs.x, y - rhs.y, z - rhs.z, w - rhs.w };
 	}
 
 	/**
@@ -444,7 +467,7 @@ namespace Nudge
 	 * @param rhs Vector to subtract from this vector
 	 * @return Reference to this vector after subtraction
 	 */
-	Float3& Float3::operator-=(const Float3& rhs)
+	Vector4& Vector4::operator-=(const Vector4& rhs)
 	{
 		if (*this == rhs)
 		{
@@ -454,6 +477,7 @@ namespace Nudge
 		x -= rhs.x;
 		y -= rhs.y;
 		z -= rhs.z;
+		w -= rhs.w;
 
 		return *this;
 	}
@@ -463,9 +487,9 @@ namespace Nudge
 	 * @param scalar Scalar value to multiply by
 	 * @return Vector scaled by the scalar
 	 */
-	Float3 Float3::operator*(float scalar) const
+	Vector4 Vector4::operator*(float scalar) const
 	{
-		return Float3{ x * scalar, y * scalar, z * scalar };
+		return Vector4{ x * scalar, y * scalar, z * scalar, w * scalar };
 	}
 
 	/**
@@ -473,11 +497,12 @@ namespace Nudge
 	 * @param scalar Scalar value to multiply by
 	 * @return Reference to this vector after scaling
 	 */
-	Float3& Float3::operator*=(float scalar)
+	Vector4& Vector4::operator*=(float scalar)
 	{
 		x *= scalar;
 		y *= scalar;
 		z *= scalar;
+		w *= scalar;
 
 		return *this;
 	}
@@ -487,9 +512,9 @@ namespace Nudge
 	 * @param scalar Scalar value to divide by
 	 * @return Vector divided by the scalar
 	 */
-	Float3 Float3::operator/(float scalar) const
+	Vector4 Vector4::operator/(float scalar) const
 	{
-		return Float3{ x / scalar, y / scalar, z / scalar };
+		return Vector4{ x / scalar, y / scalar, z / scalar, w / scalar };
 	}
 
 	/**
@@ -497,11 +522,12 @@ namespace Nudge
 	 * @param scalar Scalar value to divide by
 	 * @return Reference to this vector after division
 	 */
-	Float3& Float3::operator/=(float scalar)
+	Vector4& Vector4::operator/=(float scalar)
 	{
 		x /= scalar;
 		y /= scalar;
 		z /= scalar;
+		w /= scalar;
 
 		return *this;
 	}
@@ -510,22 +536,24 @@ namespace Nudge
 	 * Unary negation operator (negates all components)
 	 * @return Reference to this vector after negation
 	 */
-	Float3& Float3::operator-()
+	Vector4& Vector4::operator-()
 	{
 		x = -x;
 		y = -y;
 		z = -z;
+		w = -w;
 
 		return *this;
 	}
 
 	/**
 	 * Array subscript operator for read access
-	 * @param index Index (0=x, 1=y, 2=z)
+	 * Note: Missing case for index 3 (w component) - this is a bug
+	 * @param index Index (0=x, 1=y, 2=z, 3=w)
 	 * @return Component value at the specified index
 	 * @throws runtime_error If index is out of bounds
 	 */
-	float Float3::operator[](int index) const
+	float Vector4::operator[](int index) const
 	{
 		switch (index)
 		{
@@ -541,6 +569,10 @@ namespace Nudge
 		{
 			return z;
 		}
+		case 3:
+		{
+			return w;  // This case is missing in the original code
+		}
 		default:
 		{
 			throw runtime_error("Index out of bounds!");
@@ -553,7 +585,7 @@ namespace Nudge
 	 * @param rhs Vector to assign from
 	 * @return Reference to this vector after assignment
 	 */
-	Float3& Float3::operator=(const Float3& rhs)
+	Vector4& Vector4::operator=(const Vector4& rhs)
 	{
 		// Self-assignment check
 		if (*this == rhs)
@@ -564,6 +596,7 @@ namespace Nudge
 		x = rhs.x;
 		y = rhs.y;
 		z = rhs.z;
+		w = rhs.w;
 
 		return *this;
 	}
@@ -574,7 +607,7 @@ namespace Nudge
 	 * @param rhs Vector to multiply
 	 * @return Vector scaled by the scalar
 	 */
-	Float3 operator*(float lhs, const Float3& rhs)
+	Vector4 operator*(float lhs, const Vector4& rhs)
 	{
 		return rhs * lhs;
 	}
@@ -585,11 +618,12 @@ namespace Nudge
 	 * @param rhs Vector to multiply and modify
 	 * @return Reference to the modified vector
 	 */
-	Float3& operator*=(float lhs, Float3& rhs)
+	Vector4& operator*=(float lhs, Vector4& rhs)
 	{
 		rhs.x *= lhs;
 		rhs.y *= lhs;
 		rhs.z *= lhs;
+		rhs.w *= lhs;
 
 		return rhs;
 	}

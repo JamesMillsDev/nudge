@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <ostream>
 #include <string>
@@ -8,19 +8,19 @@ using std::string;
 
 namespace Nudge
 {
-	class Float2;
-	class Float4;
+	class Vector2;
+	class Vector3;
 
 	/**
-	 * @brief A 3D floating-point vector class providing mathematical operations and utilities.
+	 * @brief A 4D floating-point vector class providing mathematical operations and utilities.
 	 *
-	 * The Float3 class represents a 3-dimensional vector with floating-point components.
+	 * The Vector3 class represents a 4-dimensional vector with floating-point components.
 	 * It provides comprehensive mathematical operations including dot product, distance calculations,
 	 * normalization, interpolation, and standard arithmetic operations.
 	 *
-	 * The class uses a union to allow access to components as either x/y/z coordinates or r/g/z color values.
+	 * The class uses a union to allow access to components as either x/y/z/w coordinates or r/g/b/a color values.
 	 */
-	class Float3
+	class Vector4
 	{
 	public:
 		union
@@ -30,6 +30,7 @@ namespace Nudge
 				float x; ///< X component of the vector
 				float y; ///< Y component of the vector
 				float z; ///< Z component of the vector
+				float w; ///< W component of the vector
 			};
 
 			struct
@@ -37,6 +38,7 @@ namespace Nudge
 				float r; ///< Red component (alternative access to x)
 				float g; ///< Green component (alternative access to y)
 				float b; ///< Blue component (alternative access to z)
+				float a; ///< Alpha component (alternative access to w)
 			};
 		};
 
@@ -49,7 +51,7 @@ namespace Nudge
 		 * @param rhs The right-hand side vector
 		 * @return The dot product as a scalar value
 		 */
-		static float Dot(const Float3& lhs, const Float3& rhs);
+		static float Dot(const Vector4& lhs, const Vector4& rhs);
 
 		/**
 		 * @brief Calculates the Euclidean distance between two points.
@@ -57,7 +59,7 @@ namespace Nudge
 		 * @param rhs The second point
 		 * @return The distance between the two points
 		 */
-		static float Distance(const Float3& lhs, const Float3& rhs);
+		static float Distance(const Vector4& lhs, const Vector4& rhs);
 
 		/**
 		 * @brief Calculates the squared distance between two points.
@@ -65,14 +67,14 @@ namespace Nudge
 		 * @param rhs The second point
 		 * @return The squared distance (avoids expensive square root calculation)
 		 */
-		static float DistanceSqr(const Float3& lhs, const Float3& rhs);
+		static float DistanceSqr(const Vector4& lhs, const Vector4& rhs);
 
 		/**
 		 * @brief Calculates the angle of a vector in radians.
 		 * @param vec The vector to calculate the angle for
 		 * @return The angle in radians from the positive X-axis, range [-PI, PI]
 		 */
-		static float AngleOf(const Float3& vec);
+		static float AngleOf(const Vector4& vec);
 
 		/**
 		 * @brief Calculates the angle between two vectors in radians.
@@ -80,7 +82,7 @@ namespace Nudge
 		 * @param rhs The second vector
 		 * @return The angle between the vectors in radians, range [0, PI]
 		 */
-		static float AngleBetween(const Float3& lhs, const Float3& rhs);
+		static float AngleBetween(const Vector4& lhs, const Vector4& rhs);
 
 		/**
 		 * @brief Linearly interpolates between two vectors.
@@ -89,7 +91,7 @@ namespace Nudge
 		 * @param t The interpolation parameter, clamped to [0, 1]
 		 * @return The interpolated vector
 		 */
-		static Float3 Lerp(const Float3& a, const Float3& b, float t);
+		static Vector4 Lerp(const Vector4& a, const Vector4& b, float t);
 
 		/**
 		 * @brief Reflects a vector off a surface defined by a normal.
@@ -97,9 +99,18 @@ namespace Nudge
 		 * @param norm The surface normal vector
 		 * @return The reflected direction vector
 		 */
-		static Float3 Reflect(const Float3& inDirection, const Float3& norm);
+		static Vector4 Reflect(const Vector4& inDirection, const Vector4& norm);
 
-		static Float3 Cross(const Float3& lhs, const Float3& rhs);
+		/**
+		 * Calculates the cross product treating Vector4 as 3D vectors (ignoring w component)
+		 * The resulting w component is set to 0. Note that true 4D cross products require
+		 * three vectors and return a single vector, but this provides 3D cross product
+		 * functionality for convenience when working with homogeneous coordinates.
+		 * @param lhs Left-hand side vector (only x, y, z components used)
+		 * @param rhs Right-hand side vector (only x, y, z components used)
+		 * @return The cross product vector with w = 0
+		 */
+		static Vector4 Cross(const Vector4& lhs, const Vector4& rhs);
 
 		/**
 		 * @brief Returns a vector with the minimum components of two vectors.
@@ -107,7 +118,7 @@ namespace Nudge
 		 * @param rhs The second vector
 		 * @return A vector containing the minimum x and y components
 		 */
-		static Float3 Min(const Float3& lhs, const Float3& rhs);
+		static Vector4 Min(const Vector4& lhs, const Vector4& rhs);
 
 		/**
 		 * @brief Returns a vector with the maximum components of two vectors.
@@ -115,7 +126,7 @@ namespace Nudge
 		 * @param rhs The second vector
 		 * @return A vector containing the maximum x and y components
 		 */
-		static Float3 Max(const Float3& lhs, const Float3& rhs);
+		static Vector4 Max(const Vector4& lhs, const Vector4& rhs);
 
 		/**
 		 * @brief Clamps a vector's components between minimum and maximum values.
@@ -124,7 +135,7 @@ namespace Nudge
 		 * @param max The maximum bounds
 		 * @return The clamped vector
 		 */
-		static Float3 Clamp(const Float3& value, const Float3& min, const Float3& max);
+		static Vector4 Clamp(const Vector4& value, const Vector4& min, const Vector4& max);
 
 		// Static Factory Methods
 
@@ -132,37 +143,37 @@ namespace Nudge
 		 * @brief Creates a zero vector (0, 0, 0).
 		 * @return A vector with both components set to zero
 		 */
-		static Float3 Zero();
+		static Vector4 Zero();
 
 		/**
 		 * @brief Creates a vector with all components set to one (1, 1, 1).
 		 * @return A vector with both components set to one
 		 */
-		static Float3 One();
+		static Vector4 One();
 
 		/**
 		 * @brief Creates a vector with all components set to half (0.5, 0.5, 0.5).
 		 * @return A vector with both components set to 0.5
 		 */
-		static Float3 Half();
+		static Vector4 Half();
 
 		/**
 		 * @brief Creates a unit vector along the X-axis (1, 0, 0).
 		 * @return A unit vector pointing in the positive X direction
 		 */
-		static Float3 UnitX();
+		static Vector4 UnitX();
 
 		/**
 		 * @brief Creates a unit vector along the Y-axis (0, 1, 0).
 		 * @return A unit vector pointing in the positive Y direction
 		 */
-		static Float3 UnitY();
+		static Vector4 UnitY();
 
 		/**
 		 * @brief Creates a unit vector along the Z-axis (0, 0, 1).
 		 * @return A unit vector pointing in the positive Z direction
 		 */
-		static Float3 UnitZ();
+		static Vector4 UnitZ();
 
 	public:
 		// Constructors and Destructor
@@ -170,45 +181,46 @@ namespace Nudge
 		/**
 		 * @brief Default constructor. Creates a zero vector.
 		 */
-		Float3();
+		Vector4();
 
 		/**
 		 * @brief Constructs a vector with both components set to the same scalar value.
 		 * @param scalar The value to set for both x, y and z components
 		 */
-		explicit Float3(float scalar);
+		explicit Vector4(float scalar);
 
 		/**
-		 * @brief Constructs a new vector one-dimension higher from the passed one
+		 * @brief Constructs a new vector two-dimensions higher from the passed one
 		 * @param vec The vector to be upgraded from
 		 */
-		explicit Float3(const Float2& vec);
+		explicit Vector4(const Vector2& vec);
 
 		/**
 		 * @brief Constructs a new vector one-dimension lower from the passed one
-		 * @param vec The vector to be downgraded from
+		 * @param vec The vector to be upgraded from
 		 */
-		explicit Float3(const Float4& vec);
+		explicit Vector4(const Vector3& vec);
 
 		/**
 		 * @brief Constructs a vector with specified x, y and z components.
 		 * @param x The x component
 		 * @param y The y component
 		 * @param z The z component
+		 * @param w The w component
 		 */
-		Float3(float x, float y, float z);
+		Vector4(float x, float y, float z, float w);
 
 		/**
 		 * @brief Constructs a vector from an array of three float values.
-		 * @param values Array containing [x, y, z] values
+		 * @param values Array containing [x, y, z, w] values
 		 */
-		explicit Float3(float values[3]);
+		explicit Vector4(float values[4]);
 
 		/**
 		 * @brief Copy constructor.
 		 * @param rhs The vector to copy from
 		 */
-		Float3(const Float3& rhs);
+		Vector4(const Vector4& rhs);
 
 	public:
 		// Instance Methods
@@ -235,7 +247,7 @@ namespace Nudge
 		 * @brief Returns a normalized copy of this vector.
 		 * @return A unit vector in the same direction, or zero vector if original is zero-length
 		 */
-		Float3 Normalized() const;
+		Vector4 Normalized() const;
 
 		/**
 		 * @brief Checks if the vector is approximately zero.
@@ -264,83 +276,83 @@ namespace Nudge
 		 * @param vec The vector to output
 		 * @return Reference to the output stream
 		 */
-		friend ostream& operator<<(ostream& stream, const Float3& vec);
+		friend ostream& operator<<(ostream& stream, const Vector4& vec);
 
 		/**
 		 * @brief Equality comparison operator.
 		 * @param rhs The vector to compare with
 		 * @return True if vectors are approximately equal within floating-point tolerance
 		 */
-		bool operator==(const Float3& rhs) const;
+		bool operator==(const Vector4& rhs) const;
 
 		/**
 		 * @brief Inequality comparison operator.
 		 * @param rhs The vector to compare with
 		 * @return True if vectors are not approximately equal
 		 */
-		bool operator!=(const Float3& rhs) const;
+		bool operator!=(const Vector4& rhs) const;
 
 		/**
 		 * @brief Vector addition operator.
 		 * @param rhs The vector to add
 		 * @return The sum of the two vectors
 		 */
-		Float3 operator+(const Float3& rhs) const;
+		Vector4 operator+(const Vector4& rhs) const;
 
 		/**
 		 * @brief Vector addition assignment operator.
 		 * @param rhs The vector to add to this vector
 		 * @return Reference to this vector after addition
 		 */
-		Float3& operator+=(const Float3& rhs);
+		Vector4& operator+=(const Vector4& rhs);
 
 		/**
 		 * @brief Vector subtraction operator.
 		 * @param rhs The vector to subtract
 		 * @return The difference of the two vectors
 		 */
-		Float3 operator-(const Float3& rhs) const;
+		Vector4 operator-(const Vector4& rhs) const;
 
 		/**
 		 * @brief Vector subtraction assignment operator.
 		 * @param rhs The vector to subtract from this vector
 		 * @return Reference to this vector after subtraction
 		 */
-		Float3& operator-=(const Float3& rhs);
+		Vector4& operator-=(const Vector4& rhs);
 
 		/**
 		 * @brief Scalar multiplication operator.
 		 * @param scalar The scalar value to multiply by
 		 * @return The scaled vector
 		 */
-		Float3 operator*(float scalar) const;
+		Vector4 operator*(float scalar) const;
 
 		/**
 		 * @brief Scalar multiplication assignment operator.
 		 * @param scalar The scalar value to multiply this vector by
 		 * @return Reference to this vector after scaling
 		 */
-		Float3& operator*=(float scalar);
+		Vector4& operator*=(float scalar);
 
 		/**
 		 * @brief Scalar division operator.
 		 * @param scalar The scalar value to divide by
 		 * @return The scaled vector
 		 */
-		Float3 operator/(float scalar) const;
+		Vector4 operator/(float scalar) const;
 
 		/**
 		 * @brief Scalar division assignment operator.
 		 * @param scalar The scalar value to divide this vector by
 		 * @return Reference to this vector after scaling
 		 */
-		Float3& operator/=(float scalar);
+		Vector4& operator/=(float scalar);
 
 		/**
 		 * @brief Unary negation operator (modifies the vector in-place).
 		 * @return Reference to this vector after negation
 		 */
-		Float3& operator-();
+		Vector4& operator-();
 
 		/**
 		 * @brief Component access operator.
@@ -355,7 +367,7 @@ namespace Nudge
 		 * @param rhs The vector to copy from
 		 * @return Reference to this vector after assignment
 		 */
-		Float3& operator=(const Float3& rhs);
+		Vector4& operator=(const Vector4& rhs);
 	};
 
 	// Global Operators
@@ -366,7 +378,7 @@ namespace Nudge
 	 * @param rhs The vector to multiply
 	 * @return The scaled vector
 	 */
-	Float3 operator*(float lhs, const Float3& rhs);
+	Vector4 operator*(float lhs, const Vector4& rhs);
 
 	/**
 	 * @brief Global scalar multiplication assignment operator.
@@ -374,5 +386,5 @@ namespace Nudge
 	 * @param rhs The vector to multiply
 	 * @return The scaled vector
 	 */
-	Float3& operator*=(float lhs, Float3& rhs);
+	Vector4& operator*=(float lhs, Vector4& rhs);
 }

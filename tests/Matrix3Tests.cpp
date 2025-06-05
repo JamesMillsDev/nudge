@@ -1,11 +1,11 @@
 #include "CppUnitTest.h"
-#include "nudge/Float2x2.hpp"
+#include "Nudge/Matrix3.hpp"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-namespace Nudge::Tests
+namespace Nudge
 {
-    TEST_CLASS(Float2x2)
+    TEST_CLASS(Matrix3Tests)
     {
     public:
         

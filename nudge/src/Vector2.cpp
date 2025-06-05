@@ -1,17 +1,19 @@
 ﻿/**
- * @file Float2.cpp
- * @brief Implementation of the Float2 class for 2D vector mathematics.
+ * @file Vector2.cpp
+ * @brief Implementation of the Vector2 class for 2D vector mathematics.
  *
- * This file contains the implementation of all Float2 class methods including
+ * This file contains the implementation of all Vector2 class methods including
  * mathematical operations, utility functions, constructors, and operators.
  */
 
-#include "nudge/Float2.hpp"
+#include "Nudge/Vector2.hpp"
 
 #include <format>
 #include <stdexcept>
 
-#include "nudge/MathF.hpp"
+#include "Nudge/MathF.hpp"
+#include "Nudge/Vector3.hpp"
+#include "Nudge/Vector4.hpp"
 
 using std::runtime_error;
 
@@ -31,7 +33,7 @@ namespace Nudge
 	 * @param rhs The right-hand side vector
 	 * @return The dot product as a scalar value
 	 */
-	float Float2::Dot(const Float2& lhs, const Float2& rhs)
+	float Vector2::Dot(const Vector2& lhs, const Vector2& rhs)
 	{
 		return lhs.x * rhs.x + lhs.y * rhs.y;
 	}
@@ -46,7 +48,7 @@ namespace Nudge
 	 * @param rhs The second point
 	 * @return The distance between the two points
 	 */
-	float Float2::Distance(const Float2& lhs, const Float2& rhs)
+	float Vector2::Distance(const Vector2& lhs, const Vector2& rhs)
 	{
 		return sqrtf(DistanceSqr(lhs, rhs));
 	}
@@ -61,7 +63,7 @@ namespace Nudge
 	 * @param rhs The second point
 	 * @return The squared distance between the two points
 	 */
-	float Float2::DistanceSqr(const Float2& lhs, const Float2& rhs)
+	float Vector2::DistanceSqr(const Vector2& lhs, const Vector2& rhs)
 	{
 		return (lhs - rhs).MagnitudeSqr();
 	}
@@ -73,9 +75,9 @@ namespace Nudge
 	 * The angle is measured counter-clockwise from the positive X-axis.
 	 *
 	 * @param vec The vector to calculate the angle for
-	 * @return The angle in radians, range [-π, π]
+	 * @return The angle in radians, range [-PI, PI]
 	 */
-	float Float2::AngleOf(const Float2& vec)
+	float Vector2::AngleOf(const Vector2& vec)
 	{
 		return atan2f(vec.y, vec.x);
 	}
@@ -90,7 +92,7 @@ namespace Nudge
 	 * @param rhs The second vector
 	 * @return The angle between the vectors in radians, range [0, π]
 	 */
-	float Float2::AngleBetween(const Float2& lhs, const Float2& rhs)
+	float Vector2::AngleBetween(const Vector2& lhs, const Vector2& rhs)
 	{
 		const float magProduct = lhs.Magnitude() * rhs.Magnitude();
 
@@ -117,7 +119,7 @@ namespace Nudge
 	 * @param t The interpolation parameter, will be clamped to [0, 1]
 	 * @return The interpolated vector
 	 */
-	Float2 Float2::Lerp(const Float2& a, const Float2& b, float t)
+	Vector2 Vector2::Lerp(const Vector2& a, const Vector2& b, float t)
 	{
 		t = MathF::Clamp01(t);
 
@@ -135,7 +137,7 @@ namespace Nudge
 	 * @param norm The surface normal vector (should be normalized)
 	 * @return The reflected direction vector
 	 */
-	Float2 Float2::Reflect(const Float2& inDirection, const Float2& norm)
+	Vector2 Vector2::Reflect(const Vector2& inDirection, const Vector2& norm)
 	{
 		return inDirection - 2 * norm * Dot(inDirection, norm);
 	}
@@ -149,9 +151,9 @@ namespace Nudge
 	 * @param vec The input vector
 	 * @return A perpendicular vector (rotated 90 degrees clockwise)
 	 */
-	Float2 Float2::Perpendicular(const Float2& vec)
+	Vector2 Vector2::Perpendicular(const Vector2& vec)
 	{
-		return Float2{ vec.y, -vec.x };
+		return Vector2{ vec.y, -vec.x };
 	}
 
 	/**
@@ -164,9 +166,9 @@ namespace Nudge
 	 * @param rhs The second vector
 	 * @return A vector containing the minimum x and y components
 	 */
-	Float2 Float2::Min(const Float2& lhs, const Float2& rhs)
+	Vector2 Vector2::Min(const Vector2& lhs, const Vector2& rhs)
 	{
-		return Float2{ fminf(lhs.x, rhs.x), fminf(lhs.y, rhs.y) };
+		return Vector2{ fminf(lhs.x, rhs.x), fminf(lhs.y, rhs.y) };
 	}
 
 	/**
@@ -179,9 +181,9 @@ namespace Nudge
 	 * @param rhs The second vector
 	 * @return A vector containing the maximum x and y components
 	 */
-	Float2 Float2::Max(const Float2& lhs, const Float2& rhs)
+	Vector2 Vector2::Max(const Vector2& lhs, const Vector2& rhs)
 	{
-		return Float2{ fmaxf(lhs.x, rhs.x), fmaxf(lhs.y, rhs.y) };
+		return Vector2{ fmaxf(lhs.x, rhs.x), fmaxf(lhs.y, rhs.y) };
 	}
 
 	/**
@@ -195,9 +197,9 @@ namespace Nudge
 	 * @param max The maximum bounds for each component
 	 * @return The clamped vector
 	 */
-	Float2 Float2::Clamp(const Float2& value, const Float2& min, const Float2& max)
+	Vector2 Vector2::Clamp(const Vector2& value, const Vector2& min, const Vector2& max)
 	{
-		return Float2{ MathF::Clamp(value.x, min.x, max.x), MathF::Clamp(value.y, min.y, max.y) };
+		return Vector2{ MathF::Clamp(value.x, min.x, max.x), MathF::Clamp(value.y, min.y, max.y) };
 	}
 
 	//========================================
@@ -208,34 +210,34 @@ namespace Nudge
 	 * @brief Creates a zero vector (0, 0).
 	 * @return A vector with both components set to zero
 	 */
-	Float2 Float2::Zero()
+	Vector2 Vector2::Zero()
 	{
-		return Float2{ 0.f };
+		return Vector2{ 0.f };
 	}
 
 	/**
 	 * @brief Creates a vector with all components set to one (1, 1).
 	 * @return A vector with both components set to one
 	 */
-	Float2 Float2::One()
+	Vector2 Vector2::One()
 	{
-		return Float2{ 1.f };
+		return Vector2{ 1.f };
 	}
 
 	/**
 	 * @brief Creates a vector with all components set to half (0.5, 0.5).
 	 * @return A vector with both components set to 0.5
 	 */
-	Float2 Float2::Half()
+	Vector2 Vector2::Half()
 	{
-		return Float2{ .5f };
+		return Vector2{ .5f };
 	}
 
 	/**
 	 * @brief Creates a unit vector along the X-axis (1, 0).
 	 * @return A unit vector pointing in the positive X direction
 	 */
-	Float2 Float2::UnitX()
+	Vector2 Vector2::UnitX()
 	{
 		return { 1.f, 0.f };
 	}
@@ -244,7 +246,7 @@ namespace Nudge
 	 * @brief Creates a unit vector along the Y-axis (0, 1).
 	 * @return A unit vector pointing in the positive Y direction
 	 */
-	Float2 Float2::UnitY()
+	Vector2 Vector2::UnitY()
 	{
 		return { 0.f, 1.f };
 	}
@@ -258,8 +260,8 @@ namespace Nudge
 	 *
 	 * Delegates to the scalar constructor with value 0.0f.
 	 */
-	Float2::Float2()
-		: Float2{ 0.f }
+	Vector2::Vector2()
+		: Vector2{ 0.f }
 	{
 	}
 
@@ -270,8 +272,8 @@ namespace Nudge
 	 *
 	 * @param scalar The value to set for both x and y components
 	 */
-	Float2::Float2(const float scalar)
-		: Float2{ scalar, scalar }
+	Vector2::Vector2(const float scalar)
+		: Vector2{ scalar, scalar }
 	{
 	}
 
@@ -283,7 +285,7 @@ namespace Nudge
 	 * @param x The x component
 	 * @param y The y component
 	 */
-	Float2::Float2(const float x, const float y)
+	Vector2::Vector2(const float x, const float y)
 		: x{ x }, y{ y }
 	{
 	}
@@ -296,8 +298,26 @@ namespace Nudge
 	 *
 	 * @param values Array containing [x, y] values
 	 */
-	Float2::Float2(float values[2])
-		: Float2{ values[0], values[1] }
+	Vector2::Vector2(float values[2])
+		: Vector2{ values[0], values[1] }
+	{
+	}
+
+	/**
+	 * Constructor from Vector3 - Z component is discarded
+	 * @param vec Vector3 to convert, only x and y components are used
+	 */
+	Vector2::Vector2(const Vector3& vec)
+		: Vector2{ vec.x, vec.y }
+	{
+	}
+
+	/**
+	 * Constructor from Vector4 - Z and W components are discarded
+	 * @param vec Vector4 to convert, only x and y components are used
+	 */
+	Vector2::Vector2(const Vector4& vec)
+		: Vector2{ vec.x, vec.y }
 	{
 	}
 
@@ -308,7 +328,7 @@ namespace Nudge
 	 *
 	 * @param rhs The vector to copy from
 	 */
-	Float2::Float2(const Float2& rhs)
+	Vector2::Vector2(const Vector2& rhs)
 		: x{ rhs.x }, y{ rhs.y }
 	{
 	}
@@ -325,7 +345,7 @@ namespace Nudge
 	 *
 	 * @return The magnitude of the vector
 	 */
-	float Float2::Magnitude() const
+	float Vector2::Magnitude() const
 	{
 		return sqrtf(MagnitudeSqr());
 	}
@@ -338,7 +358,7 @@ namespace Nudge
 	 *
 	 * @return The squared magnitude (x² + y²)
 	 */
-	float Float2::MagnitudeSqr() const
+	float Vector2::MagnitudeSqr() const
 	{
 		return x * x + y * y;
 	}
@@ -350,7 +370,7 @@ namespace Nudge
 	 * If the vector is zero-length, both components are set to zero.
 	 * This method modifies the current vector.
 	 */
-	void Float2::Normalize()
+	void Vector2::Normalize()
 	{
 		if (const float mag = Magnitude(); mag > 0.f)
 		{
@@ -374,11 +394,11 @@ namespace Nudge
 	 *
 	 * @return A unit vector in the same direction, or zero vector if original is zero-length
 	 */
-	Float2 Float2::Normalized() const
+	Vector2 Vector2::Normalized() const
 	{
 		const float mag = Magnitude();
 
-		return mag > 0.f ? Float2{ x / mag, y / mag } : Float2{ 0.f };
+		return mag > 0.f ? Vector2{ x / mag, y / mag } : Vector2{ 0.f };
 	}
 
 	/**
@@ -389,7 +409,7 @@ namespace Nudge
 	 *
 	 * @return True if both components are close to zero within floating-point tolerance
 	 */
-	bool Float2::IsZero() const
+	bool Vector2::IsZero() const
 	{
 		return MathF::IsNearZero(x) && MathF::IsNearZero(y);
 	}
@@ -402,7 +422,7 @@ namespace Nudge
 	 *
 	 * @return True if the magnitude is approximately 1.0 within floating-point tolerance
 	 */
-	bool Float2::IsUnit() const
+	bool Vector2::IsUnit() const
 	{
 		return MathF::Compare(Magnitude(), 1.f);
 	}
@@ -415,7 +435,7 @@ namespace Nudge
 	 *
 	 * @return A formatted string representation of the vector
 	 */
-	string Float2::ToString() const
+	string Vector2::ToString() const
 	{
 		return std::format("({}, {})", x, y);
 	}
@@ -427,14 +447,14 @@ namespace Nudge
 	/**
 	 * @brief Stream insertion operator for easy printing.
 	 *
-	 * Allows Float2 objects to be directly output to streams using the << operator.
+	 * Allows Vector2 objects to be directly output to streams using the << operator.
 	 * Uses the ToString() method for formatting.
 	 *
 	 * @param stream The output stream
 	 * @param vec The vector to output
 	 * @return Reference to the output stream for chaining
 	 */
-	ostream& operator<<(ostream& stream, const Float2& vec)
+	ostream& operator<<(ostream& stream, const Vector2& vec)
 	{
 		stream << vec.ToString();
 
@@ -451,7 +471,7 @@ namespace Nudge
 	 * @param rhs The vector to compare with
 	 * @return True if vectors are approximately equal within floating-point tolerance
 	 */
-	bool Float2::operator==(const Float2& rhs) const
+	bool Vector2::operator==(const Vector2& rhs) const
 	{
 		return MathF::Compare(x, rhs.x) && MathF::Compare(y, rhs.y);
 	}
@@ -465,7 +485,7 @@ namespace Nudge
 	 * @param rhs The vector to compare with
 	 * @return True if vectors are not approximately equal
 	 */
-	bool Float2::operator!=(const Float2& rhs) const
+	bool Vector2::operator!=(const Vector2& rhs) const
 	{
 		return !MathF::Compare(x, rhs.x) || !MathF::Compare(y, rhs.y);
 	}
@@ -479,9 +499,9 @@ namespace Nudge
 	 * @param rhs The vector to add
 	 * @return The sum of the two vectors
 	 */
-	Float2 Float2::operator+(const Float2& rhs) const
+	Vector2 Vector2::operator+(const Vector2& rhs) const
 	{
-		return Float2{ x + rhs.x, y + rhs.y };
+		return Vector2{ x + rhs.x, y + rhs.y };
 	}
 
 	/**
@@ -493,7 +513,7 @@ namespace Nudge
 	 * @param rhs The vector to add to this vector
 	 * @return Reference to this vector after addition
 	 */
-	Float2& Float2::operator+=(const Float2& rhs)
+	Vector2& Vector2::operator+=(const Vector2& rhs)
 	{
 		if (*this == rhs)
 		{
@@ -515,9 +535,9 @@ namespace Nudge
 	 * @param rhs The vector to subtract
 	 * @return The difference of the two vectors
 	 */
-	Float2 Float2::operator-(const Float2& rhs) const
+	Vector2 Vector2::operator-(const Vector2& rhs) const
 	{
-		return Float2{ x - rhs.x, y - rhs.y };
+		return Vector2{ x - rhs.x, y - rhs.y };
 	}
 
 	/**
@@ -529,7 +549,7 @@ namespace Nudge
 	 * @param rhs The vector to subtract from this vector
 	 * @return Reference to this vector after subtraction
 	 */
-	Float2& Float2::operator-=(const Float2& rhs)
+	Vector2& Vector2::operator-=(const Vector2& rhs)
 	{
 		if (*this == rhs)
 		{
@@ -551,9 +571,9 @@ namespace Nudge
 	 * @param scalar The scalar value to multiply by
 	 * @return The scaled vector
 	 */
-	Float2 Float2::operator*(const float scalar) const
+	Vector2 Vector2::operator*(const float scalar) const
 	{
-		return Float2{ x * scalar, y * scalar };
+		return Vector2{ x * scalar, y * scalar };
 	}
 
 	/**
@@ -565,7 +585,7 @@ namespace Nudge
 	 * @param scalar The scalar value to multiply this vector by
 	 * @return Reference to this vector after scaling
 	 */
-	Float2& Float2::operator*=(const float scalar)
+	Vector2& Vector2::operator*=(const float scalar)
 	{
 		x *= scalar;
 		y *= scalar;
@@ -583,9 +603,9 @@ namespace Nudge
 	 * @param scalar The scalar value to divide by
 	 * @return The scaled vector
 	 */
-	Float2 Float2::operator/(const float scalar) const
+	Vector2 Vector2::operator/(const float scalar) const
 	{
-		return Float2{ x / scalar, y / scalar };
+		return Vector2{ x / scalar, y / scalar };
 	}
 
 	/**
@@ -598,7 +618,7 @@ namespace Nudge
 	 * @param scalar The scalar value to divide this vector by
 	 * @return Reference to this vector after scaling
 	 */
-	Float2& Float2::operator/=(const float scalar)
+	Vector2& Vector2::operator/=(const float scalar)
 	{
 		x /= scalar;
 		y /= scalar;
@@ -614,7 +634,7 @@ namespace Nudge
 	 *
 	 * @return Reference to this vector after negation
 	 */
-	Float2& Float2::operator-()
+	Vector2& Vector2::operator-()
 	{
 		x = -x;
 		y = -y;
@@ -634,22 +654,22 @@ namespace Nudge
 	 * @return The component value at the specified index
 	 * @throws std::runtime_error if index is out of bounds
 	 */
-	float Float2::operator[](const int index) const
+	float Vector2::operator[](const int index) const
 	{
 		switch (index)
 		{
-		case 0:
-		{
-			return x;
-		}
-		case 1:
-		{
-			return y;
-		}
-		default:
-		{
-			throw runtime_error("Index out of bounds!");
-		}
+			case 0:
+				{
+					return x;
+				}
+			case 1:
+				{
+					return y;
+				}
+			default:
+				{
+					throw runtime_error("Index out of bounds!");
+				}
 		}
 	}
 
@@ -662,7 +682,7 @@ namespace Nudge
 	 * @param rhs The vector to copy from
 	 * @return Reference to this vector after assignment
 	 */
-	Float2& Float2::operator=(const Float2& rhs)
+	Vector2& Vector2::operator=(const Vector2& rhs)
 	{
 		// Self-assignment check
 		if (*this == rhs)
@@ -690,7 +710,7 @@ namespace Nudge
 	 * @param rhs The vector to multiply
 	 * @return The scaled vector
 	 */
-	Float2 operator*(const float lhs, const Float2& rhs)
+	Vector2 operator*(const float lhs, const Vector2& rhs)
 	{
 		return rhs * lhs;
 	}
@@ -705,7 +725,7 @@ namespace Nudge
 	 * @param rhs The vector to multiply (passed by value)
 	 * @return The scaled vector
 	 */
-	Float2& operator*=(const float lhs, Float2& rhs)
+	Vector2& operator*=(const float lhs, Vector2& rhs)
 	{
 		rhs.x *= lhs;
 		rhs.y *= lhs;

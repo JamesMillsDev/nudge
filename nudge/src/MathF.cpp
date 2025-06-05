@@ -2,9 +2,14 @@
 
 #include <cfloat>
 #include <cmath>
+#include <numbers>
+
+using std::numbers::pi_v;
 
 namespace Nudge
 {
+	float MathF::pi = pi_v<float>;
+
 	bool MathF::IsNearZero(const float value, const float threshold)
 	{
 		return fabsf(value) <= threshold;  // Absolute comparison for zero
@@ -43,5 +48,15 @@ namespace Nudge
 		}
 
 		return value;
+	}
+
+	float MathF::Degrees(float radians)
+	{
+		return 180.f / pi * radians;
+	}
+
+	float MathF::Radians(float degrees)
+	{
+		return pi / 180.f * degrees;
 	}
 }

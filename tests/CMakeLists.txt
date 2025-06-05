@@ -1,11 +1,11 @@
 # Create the test project as a shared library (DLL) like VS does
 add_library(NudgeTests SHARED
-    Float2Tests.cpp
-    Float2x2Tests.cpp
-    Float3Tests.cpp
-    Float3x3Tests.cpp
-    Float4Tests.cpp
-    Float4x4Tests.cpp
+    Vector2Tests.cpp
+    Matrix2Tests.cpp
+    Vector3Tests.cpp
+    Matrix3Tests.cpp
+    Vector4Tests.cpp
+    Matrix4Tests.cpp
 )
 
 # Always link to nudge library
