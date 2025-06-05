@@ -210,25 +210,25 @@ namespace Nudge
 	/**
 	 * Checks if this matrix is approximately an identity matrix
 	 * Uses floating-point tolerance for comparison
-	 * @param threshold The sensitivity of the comparisons
+	 * @param tolerance The sensitivity of the comparisons
 	 * @return True if matrix is approximately identity
 	 */
-	bool Matrix2::IsIdentity(float threshold) const
+	bool Matrix2::IsIdentity(float tolerance) const
 	{
-		return MathF::Compare(m11, 1.f, threshold) && MathF::IsNearZero(m21, threshold) &&
-			MathF::IsNearZero(m12, threshold) && MathF::Compare(m22, 1.f, threshold);
+		return MathF::Compare(m11, 1.f, tolerance) && MathF::IsNearZero(m21, tolerance) &&
+			MathF::IsNearZero(m12, tolerance) && MathF::Compare(m22, 1.f, tolerance);
 	}
 
 	/**
 	 * Checks if this matrix is approximately a zero matrix
 	 * Uses floating-point tolerance for comparison
-	 * @param threshold The sensitivity of the comparisons
+	 * @param tolerance The sensitivity of the comparisons
 	 * @return True if all elements are approximately zero
 	 */
-	bool Matrix2::IsZero(float threshold) const
+	bool Matrix2::IsZero(float tolerance) const
 	{
-		return MathF::IsNearZero(m11, threshold) && MathF::IsNearZero(m21, threshold) &&
-			MathF::IsNearZero(m12, threshold) && MathF::IsNearZero(m22, threshold);
+		return MathF::IsNearZero(m11, tolerance) && MathF::IsNearZero(m21, tolerance) &&
+			MathF::IsNearZero(m12, tolerance) && MathF::IsNearZero(m22, tolerance);
 	}
 
 	/**

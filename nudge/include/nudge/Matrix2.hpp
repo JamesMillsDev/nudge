@@ -147,17 +147,17 @@ namespace Nudge
 
 		/**
 		 * Checks if this matrix is an identity matrix (within floating-point tolerance)
-		 * @param threshold The sensitivity of the comparisons
+		 * @param tolerance The sensitivity of the comparisons
 		 * @return True if this matrix is approximately the identity matrix
 		 */
-		bool IsIdentity(float threshold = FLT_EPSILON) const;
+		bool IsIdentity(float tolerance = FLT_EPSILON) const;
 
 		/**
 		 * Checks if this matrix is a zero matrix (within floating-point tolerance)
-		 * @param threshold The sensitivity of the comparisons
+		 * @param tolerance The sensitivity of the comparisons
 		 * @return True if all elements are approximately zero
 		 */
-		bool IsZero(float threshold = FLT_EPSILON) const;
+		bool IsZero(float tolerance = FLT_EPSILON) const;
 
 		/**
 		 * Gets a column vector from the matrix
