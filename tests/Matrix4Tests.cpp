@@ -970,5 +970,99 @@ namespace Nudge
             // Expected: Scale first (2,0,0), then rotate 90 degrees around Z (0,2,0), then translate (1,2,0)
             AssertVector3Equal(Vector3(1.0f, 2.0f, 0.0f), result, 0.001f);
         }
+
+        TEST_METHOD(Property_OrthographicProjection_UnitCube_IsCorrect)
+        {
+            // Create orthographic projection for a 2x2x2 cube centered at origin
+            Matrix4 ortho = Matrix4::Orthographic(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 10.0f);
+
+            // Test corner of the viewing volume
+            Vector4 testPoint(1.0f, 1.0f, -0.1f, 1.0f); // At near plane, top-right
+            Vector4 result = ortho * testPoint;
+
+            // Expected: Should map to (1, 1, -1) in NDC space
+            AssertVector4Equal(Vector4(1.0f, 1.0f, -1.0f, 1.0f), result, 0.001f);
+        }
+
+        TEST_METHOD(Property_OrthographicProjection_AsymmetricBounds_IsCorrect)
+        {
+            // Create orthographic projection with asymmetric bounds
+            Matrix4 ortho = Matrix4::Orthographic(0.0f, 4.0f, -2.0f, 2.0f, 1.0f, 5.0f);
+
+            // Test center of the viewing volume
+            Vector4 testPoint(2.0f, 0.0f, -3.0f, 1.0f); // Center of volume
+            Vector4 result = ortho * testPoint;
+
+            // Expected: Should map to (0, 0, 0) in NDC space
+            AssertVector4Equal(Vector4(0.0f, 0.0f, 0.0f, 1.0f), result, 0.001f);
+        }
+
+        TEST_METHOD(Property_LookAtMatrix_LookingDownNegativeZ_IsCorrect)
+        {
+            Vector3 eye(0.0f, 0.0f, 5.0f);
+            Vector3 target(0.0f, 0.0f, 0.0f);
+            Vector3 up(0.0f, 1.0f, 0.0f);
+
+            Matrix4 lookAt = Matrix4::LookAt(eye, target, up);
+
+            // Test a point that should transform to camera space
+            Vector3 worldPoint(1.0f, 0.0f, 0.0f); // Point to the right of target
+            Vector3 result = lookAt * worldPoint;
+
+            // Expected: Should be at (1, 0, -5) in camera space (right, same height, in front)
+            AssertVector3Equal(Vector3(1.0f, 0.0f, -5.0f), result, 0.001f);
+        }
+
+        TEST_METHOD(Property_LookAtMatrix_LookingAtAngle_IsCorrect)
+        {
+            Vector3 eye(3.0f, 4.0f, 5.0f);
+            Vector3 target(0.0f, 0.0f, 0.0f);
+            Vector3 up(0.0f, 1.0f, 0.0f);
+
+            Matrix4 lookAt = Matrix4::LookAt(eye, target, up);
+
+            // Test that the target point transforms to origin in camera space
+            Vector3 result = lookAt * target;
+
+            // Expected: Target should be at origin with negative Z (in front of camera)
+            float expectedZ = -(Vector3(3.0f, 4.0f, 5.0f).Magnitude()); // Negative distance from eye to target
+            AssertVector3Equal(Vector3(0.0f, 0.0f, expectedZ), result, 0.001f);
+        }
+
+        TEST_METHOD(Property_PerspectiveProjection_StandardFOV_IsCorrect)
+        {
+            float fovY = 60.0f; // degrees
+            float aspectRatio = 16.0f / 9.0f;
+            float nearPlane = 0.1f;
+            float farPlane = 100.0f;
+
+            Matrix4 perspective = Matrix4::Perspective(fovY, aspectRatio, nearPlane, farPlane);
+
+            // Test a point at the near plane center
+            Vector4 testPoint(0.0f, 0.0f, -nearPlane, 1.0f);
+            Vector4 result = perspective * testPoint;
+
+            // After perspective divide (result.xyz / result.w), Z should be -1 (near plane in NDC)
+            float ndcZ = result.z / result.w;
+            Assert::AreEqual(-1.0f, ndcZ, 0.001f);
+        }
+
+        TEST_METHOD(Property_PerspectiveProjection_FarPlaneMapping_IsCorrect)
+        {
+            float fovY = 45.0f; // degrees
+            float aspectRatio = 1.0f; // Square viewport
+            float nearPlane = 1.0f;
+            float farPlane = 10.0f;
+
+            Matrix4 perspective = Matrix4::Perspective(fovY, aspectRatio, nearPlane, farPlane);
+
+            // Test a point at the far plane center
+            Vector4 testPoint(0.0f, 0.0f, -farPlane, 1.0f);
+            Vector4 result = perspective * testPoint;
+
+            // After perspective divide, Z should be 1 (far plane in NDC)
+            float ndcZ = result.z / result.w;
+            Assert::AreEqual(1.0f, ndcZ, 0.001f);
+        }
     };
 }
