@@ -1,4 +1,9 @@
-﻿#pragma once
+﻿/**
+ * @file Matrix3.hpp
+ * @brief 3x3 Matrix class for 2D transformations and rotations using column-major storage
+ */
+
+#pragma once
 
 #include <ostream>
 #include <string>

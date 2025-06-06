@@ -528,7 +528,7 @@ namespace Nudge
 	string Matrix3::ToString() const
 	{
 		return std::format(
-			"[\n\t{}, {}, {},\n\t{}, {}, {},\n\t {}, {}, {}\t]",
+			"[\n\t{}, {}, {},\n\t{}, {}, {},\n\t {}, {}, {}\n]",
 			m11, m12, m13, m21, m22, m23, m31, m32, m33
 		);
 	}
