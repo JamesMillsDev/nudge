@@ -111,11 +111,31 @@ namespace Nudge
 
 	Vector3 Quaternion::Euler() const
 	{
+		// For XYZ rotation order (roll-pitch-yaw), try this formulation:
+		float sinRCosP = 2.f * (w * x + y * z);
+		float cosRCosP = 1.f - 2.f * (x * x + y * y);
+		float roll = MathF::Atan2(sinRCosP, cosRCosP);
+
+		float sinP = 2.f * (w * y - z * x);
+		float pitch;
+		if (MathF::Abs(sinP) >= 1.f)
+		{
+			pitch = (sinP >= 0.f ? 1.f : -1.f) * MathF::pi / 2.f; // Use 90 degrees if out of range
+		}
+		else
+		{
+			pitch = MathF::Asin(sinP);
+		}
+
+		float sinYCosP = 2.f * (w * z + x * y);
+		float cosyCosP = 1.f - 2.f * (y * y + z * z);
+		float yaw = MathF::Atan2(sinYCosP, cosyCosP);
+
 		return Vector3
 		{
-			MathF::Degrees(MathF::Atan2(2.f * (w * x - y * z), 1.f - 2.f * (MathF::Squared(x) + MathF::Squared(y)))),
-			MathF::Degrees(MathF::Asin(MathF::Clamp(2.f * (w * y - z * x), -1.f, 1.f))),
-			MathF::Degrees(MathF::Atan2(2.f * (w * z - x * y), 1.f - 2.f * (MathF::Squared(y) + MathF::Squared(z))))
+			MathF::Degrees(pitch),  // X
+			MathF::Degrees(yaw),    // Y  
+			MathF::Degrees(roll)    // Z
 		};
 	}
 
@@ -137,12 +157,22 @@ namespace Nudge
 
 	Matrix4 Quaternion::ToMatrix4() const
 	{
-		return { };
+		return Matrix4
+		{
+			ToMatrix3()
+		};
 	}
 
 	Quaternion Quaternion::operator*(const Quaternion& rhs)
 	{
-		return { };
+		// Return in xyzw order to match your constructor
+		return Quaternion
+		{
+			w * rhs.x + x * rhs.w + y * rhs.z - z * rhs.y,  // x component
+			w * rhs.y - x * rhs.z + y * rhs.w + z * rhs.x,  // y component  
+			w * rhs.z + x * rhs.y - y * rhs.x + z * rhs.w,  // z component
+			w * rhs.w - x * rhs.x - y * rhs.y - z * rhs.z   // w component
+		};
 	}
 
 	Vector3 Quaternion::operator*(const Vector3& rhs) const
@@ -169,7 +199,7 @@ namespace Nudge
 	bool Quaternion::operator==(const Quaternion& rhs) const
 	{
 		return MathF::Compare(x, rhs.x, MathF::epsilon) && MathF::Compare(y, rhs.y, MathF::epsilon) &&
-		       MathF::Compare(w, rhs.w, MathF::epsilon) && MathF::Compare(w, rhs.w, MathF::epsilon);
+		       MathF::Compare(z, rhs.z, MathF::epsilon) && MathF::Compare(w, rhs.w, MathF::epsilon);
 	}
 
 	bool Quaternion::operator!=(const Quaternion& rhs) const
