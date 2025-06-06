@@ -11,19 +11,19 @@ using std::runtime_error;
 namespace Nudge
 {
 	/**
- * Matrix2 Implementation
- * Column-major 2x2 matrix operations
- *
- * @author JamesMillsAIE
- * @date 2025-06-05
- */
+	 * Matrix2 Implementation
+	 * Column-major 2x2 matrix operations
+	 *
+	 * @author JamesMillsAIE
+	 * @date 2025-06-05
+	 */
 
- /**
-  * Creates a 2x2 identity matrix
-  * | 1  0 |
-  * | 0  1 |
-  * @return Identity matrix
-  */
+	 /**
+	  * Creates a 2x2 identity matrix
+	  * | 1  0 |
+	  * | 0  1 |
+	  * @return Identity matrix
+	  */
 	Matrix2 Matrix2::Identity()
 	{
 		return Matrix2

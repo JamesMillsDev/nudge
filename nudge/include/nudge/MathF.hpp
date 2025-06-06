@@ -18,5 +18,7 @@ namespace Nudge
 		static float Degrees(float radians);
 		static float Radians(float degrees);
 
+		static float Squared(float val);
+
 	};
 }

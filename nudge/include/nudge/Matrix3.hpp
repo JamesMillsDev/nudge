@@ -228,6 +228,27 @@ namespace Nudge
         void Transpose();
 
         /**
+		 * @brief Calculates the cofactor matrix of this 3x3 matrix.
+		 *
+		 * The cofactor matrix is computed by calculating the cofactor of each element,
+		 * where the cofactor C_ij = (-1)^(i+j) * M_ij, and M_ij is the minor
+		 * (determinant of the 2x2 submatrix obtained by removing row i and column j).
+		 *
+		 * @return Matrix3 The cofactor matrix
+		 */
+        Matrix3 Cofactor() const;
+
+        /**
+         * @brief Calculates the adjugate (adjoint) matrix of this 3x3 matrix.
+         *
+         * The adjugate matrix is the transpose of the cofactor matrix. It is used
+         * in computing the matrix inverse: A^(-1) = (1/det(A)) * adj(A).
+         *
+         * @return Matrix3 The adjugate matrix (transpose of the cofactor matrix)
+         */
+        Matrix3 Adjugate() const;
+
+        /**
          * Calculates and returns the inverse of this matrix
          * Uses adjugate matrix method: A^(-1) = (1/det(A)) * adj(A)
          * @return Inverse matrix

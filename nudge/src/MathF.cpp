@@ -59,4 +59,9 @@ namespace Nudge
 	{
 		return pi / 180.f * degrees;
 	}
+
+	float MathF::Squared(float val)
+	{
+		return val * val;
+	}
 }
