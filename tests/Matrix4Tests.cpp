@@ -3,6 +3,7 @@
  * @brief Unit tests for Matrix4 4x4 transformation matrix class
  */
 
+#include <iostream>
 #include <numbers>
 
 #include "CppUnitTest.h"
@@ -374,9 +375,10 @@ namespace Nudge
             Matrix4 translation = Matrix4::Translation(1.0f, 2.0f, 3.0f);
             Matrix4 rotation = Matrix4::RotationZ(45.0f);
             Matrix4 scale = Matrix4::Scale(2.0f, 3.0f, 4.0f);
-            Matrix4 matrix = translation * rotation * scale;
+            Matrix4 matrix = (translation * rotation) * scale;
             Matrix4 inverse = matrix.Inverse();
             Matrix4 product = matrix * inverse;
+
             AssertMatrix4Equal(Matrix4::Identity(), product, 0.001f);
         }
 

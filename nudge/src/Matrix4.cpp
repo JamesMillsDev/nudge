@@ -275,24 +275,28 @@ namespace Nudge
 
 		return Matrix4
 		{
+			// Row 1
 			+calculate3X3Det(m22, m23, m24, m32, m33, m34, m42, m43, m44), // C11
-			-calculate3X3Det(m12, m13, m14, m32, m33, m34, m42, m43, m44), // C12
-			+calculate3X3Det(m12, m13, m14, m22, m23, m24, m42, m43, m44), // C13
-			-calculate3X3Det(m12, m13, m14, m22, m23, m24, m32, m33, m34), // C14
+			-calculate3X3Det(m21, m23, m24, m31, m33, m34, m41, m43, m44), // C12
+			+calculate3X3Det(m21, m22, m24, m31, m32, m34, m41, m42, m44), // C13
+			-calculate3X3Det(m21, m22, m23, m31, m32, m33, m41, m42, m43), // C14
 
-			-calculate3X3Det(m21, m23, m24, m31, m33, m34, m41, m43, m44), // C21
+			// Row 2
+			-calculate3X3Det(m12, m13, m14, m32, m33, m34, m42, m43, m44), // C21
 			+calculate3X3Det(m11, m13, m14, m31, m33, m34, m41, m43, m44), // C22
-			-calculate3X3Det(m11, m13, m14, m21, m23, m24, m41, m43, m44), // C23
-			+calculate3X3Det(m11, m13, m14, m21, m23, m24, m31, m33, m34), // C24
+			-calculate3X3Det(m11, m12, m14, m31, m32, m34, m41, m42, m44), // C23
+			+calculate3X3Det(m11, m12, m13, m31, m32, m33, m41, m42, m43), // C24
 
-			+calculate3X3Det(m21, m22, m24, m31, m32, m34, m41, m42, m44), // C31
-			-calculate3X3Det(m11, m12, m14, m31, m32, m34, m41, m42, m44), // C32
+			// Row 3
+			+calculate3X3Det(m12, m13, m14, m22, m23, m24, m42, m43, m44), // C31
+			-calculate3X3Det(m11, m13, m14, m21, m23, m24, m41, m43, m44), // C32
 			+calculate3X3Det(m11, m12, m14, m21, m22, m24, m41, m42, m44), // C33
-			-calculate3X3Det(m11, m12, m14, m21, m22, m24, m31, m32, m34), // C34
+			-calculate3X3Det(m11, m12, m13, m21, m22, m23, m41, m42, m43), // C34
 
-			-calculate3X3Det(m21, m22, m23, m31, m32, m33, m41, m42, m43), // C41
-			+calculate3X3Det(m11, m12, m13, m31, m32, m33, m41, m42, m43), // C42
-			-calculate3X3Det(m11, m12, m13, m21, m22, m23, m41, m42, m43), // C43
+			// Row 4
+			-calculate3X3Det(m12, m13, m14, m22, m23, m24, m32, m33, m34), // C41
+			+calculate3X3Det(m11, m13, m14, m21, m23, m24, m31, m33, m34), // C42
+			-calculate3X3Det(m11, m12, m14, m21, m22, m24, m31, m32, m34), // C43
 			+calculate3X3Det(m11, m12, m13, m21, m22, m23, m31, m32, m33)  // C44
 		};
 	}
@@ -318,11 +322,11 @@ namespace Nudge
 
 		// Check for pure translation matrix
 		if (MathF::IsNearZero(m11 - 1.0f) && MathF::IsNearZero(m22 - 1.0f) &&
-			MathF::IsNearZero(m33 - 1.0f) && MathF::IsNearZero(m44 - 1.0f) &&
-			MathF::IsNearZero(m12) && MathF::IsNearZero(m13) &&
-			MathF::IsNearZero(m21) && MathF::IsNearZero(m23) &&
-			MathF::IsNearZero(m31) && MathF::IsNearZero(m32) &&
-			MathF::IsNearZero(m41) && MathF::IsNearZero(m42) && MathF::IsNearZero(m43))
+		    MathF::IsNearZero(m33 - 1.0f) && MathF::IsNearZero(m44 - 1.0f) &&
+		    MathF::IsNearZero(m12) && MathF::IsNearZero(m13) &&
+		    MathF::IsNearZero(m21) && MathF::IsNearZero(m23) &&
+		    MathF::IsNearZero(m31) && MathF::IsNearZero(m32) &&
+		    MathF::IsNearZero(m41) && MathF::IsNearZero(m42) && MathF::IsNearZero(m43))
 		{
 			return Translation(-m14, -m24, -m34);
 		}
@@ -330,7 +334,7 @@ namespace Nudge
 		Matrix4 adj = Adjugate();
 
 		// Fall back to general inverse
-		return 1.0f / det * adj;
+		return (1.0f / det) * adj;
 	}
 
 	bool Matrix4::IsIdentity(float tolerance) const
