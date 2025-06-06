@@ -341,7 +341,7 @@ namespace Nudge
 		       MathF::IsNearZero(m23, tolerance) && MathF::IsNearZero(m24, tolerance) &&
 		       MathF::IsNearZero(m31, tolerance) && MathF::IsNearZero(m23, tolerance) &&
 		       MathF::Compare(m33, 1.f, tolerance) && MathF::IsNearZero(m34, tolerance) &&
-		       MathF::IsNearZero(m41, tolerance) && MathF::IsNearZero(m24, tolerance) &&
+		       MathF::IsNearZero(m41, tolerance) && MathF::IsNearZero(m42, tolerance) &&
 		       MathF::IsNearZero(m43, tolerance) && MathF::Compare(m44, 1.f, tolerance);
 	}
 
@@ -353,7 +353,7 @@ namespace Nudge
 		       MathF::IsNearZero(m23, tolerance) && MathF::IsNearZero(m24, tolerance) &&
 		       MathF::IsNearZero(m31, tolerance) && MathF::IsNearZero(m23, tolerance) &&
 		       MathF::IsNearZero(m33, tolerance) && MathF::IsNearZero(m34, tolerance) &&
-		       MathF::IsNearZero(m41, tolerance) && MathF::IsNearZero(m24, tolerance) &&
+		       MathF::IsNearZero(m41, tolerance) && MathF::IsNearZero(m42, tolerance) &&
 		       MathF::IsNearZero(m43, tolerance) && MathF::IsNearZero(m44, tolerance);
 	}
 
@@ -383,7 +383,7 @@ namespace Nudge
 		{
 			m11, m12, m13,
 			m21, m22, m23,
-			m31, m23, m33
+			m31, m32, m33
 		};
 	}
 
@@ -431,7 +431,7 @@ namespace Nudge
 					m12 = column.x;
 					m22 = column.y;
 					m32 = column.z;
-					m42 = column.z;
+					m42 = column.w;
 					break;
 				}
 			case 2:
@@ -439,7 +439,7 @@ namespace Nudge
 					m13 = column.x;
 					m23 = column.y;
 					m33 = column.z;
-					m43 = column.z;
+					m43 = column.w;
 					break;
 				}
 			case 3:
