@@ -32,13 +32,13 @@ namespace Nudge
 		const float halfRollCos = MathF::Cos(roll * .5f);
 		const float halfRollSin = MathF::Sin(roll * .5f);
 
+		// XYZ order: Pitch x Yaw x Roll
 		return Quaternion
 		{
-			halfPitchSin * halfYawCos * halfRollCos - halfPitchCos * halfYawSin * halfRollSin,
-			halfPitchCos * halfYawSin * halfRollCos + halfPitchSin * halfYawCos * halfRollSin,
-			halfPitchCos * halfYawCos * halfRollSin - halfPitchSin * halfYawSin * halfRollCos,
-
-			halfPitchCos * halfYawCos * halfRollCos + halfPitchSin * halfYawSin * halfRollSin
+			halfPitchSin * halfYawCos * halfRollCos + halfPitchCos * halfYawSin * halfRollSin,
+			halfPitchCos * halfYawSin * halfRollCos - halfPitchSin * halfYawCos * halfRollSin,
+			halfPitchCos * halfYawCos * halfRollSin + halfPitchSin * halfYawSin * halfRollCos,
+			halfPitchCos * halfYawCos * halfRollCos - halfPitchSin * halfYawSin * halfRollSin,
 		};
 	}
 
@@ -114,7 +114,7 @@ namespace Nudge
 		return Vector3
 		{
 			MathF::Degrees(MathF::Atan2(2.f * (w * x - y * z), 1.f - 2.f * (MathF::Squared(x) + MathF::Squared(y)))),
-			MathF::Degrees(MathF::Asin(MathF::Clamp(2.f * (w * y + z * x), -1.f, 1.f))),
+			MathF::Degrees(MathF::Asin(MathF::Clamp(2.f * (w * y - z * x), -1.f, 1.f))),
 			MathF::Degrees(MathF::Atan2(2.f * (w * z - x * y), 1.f - 2.f * (MathF::Squared(y) + MathF::Squared(z))))
 		};
 	}
@@ -124,13 +124,13 @@ namespace Nudge
 		return Matrix3
 		{
 			1.f - 2.f * (MathF::Squared(y) + MathF::Squared(z)),
-			2.f * (x * y + w * z),
-			2.f * (x * z - w * y),
 			2.f * (x * y - w * z),
+			2.f * (x * z + w * y),
+			2.f * (x * y + w * z),
 			1.f - 2.f * (MathF::Squared(x) + MathF::Squared(z)),
-			2.f * (y * z + w * x),
-			2.f * (x * z - w * y),
 			2.f * (y * z - w * x),
+			2.f * (x * z - w * y),
+			2.f * (y * z + w * x),
 			1.f - 2.f * (MathF::Squared(x) + MathF::Squared(y))
 		};
 	}
@@ -168,8 +168,8 @@ namespace Nudge
 
 	bool Quaternion::operator==(const Quaternion& rhs) const
 	{
-		return MathF::Compare(x, rhs.x) && MathF::Compare(y, rhs.y) &&
-		       MathF::Compare(w, rhs.w) && MathF::Compare(w, rhs.w);
+		return MathF::Compare(x, rhs.x, MathF::epsilon) && MathF::Compare(y, rhs.y, MathF::epsilon) &&
+		       MathF::Compare(w, rhs.w, MathF::epsilon) && MathF::Compare(w, rhs.w, MathF::epsilon);
 	}
 
 	bool Quaternion::operator!=(const Quaternion& rhs) const
