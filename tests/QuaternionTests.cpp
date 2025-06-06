@@ -124,7 +124,7 @@ namespace Nudge
 
         TEST_METHOD(LookRotation_ForwardX_Creates90DegreeYRotation)
         {
-            Vector3 forward(1.0f, 0.0f, 0.0f);
+            Vector3 forward(-1.0f, 0.0f, 0.0f);
             Vector3 up(0.0f, 1.0f, 0.0f);
             Quaternion quat = Quaternion::LookRotation(forward, up);
             float expected = MathF::Sqrt(2.0f) / 2.0f;
@@ -153,8 +153,8 @@ namespace Nudge
             Quaternion a(0.0f, 0.0f, 0.0f, 1.0f);
             Quaternion b(1.0f, 0.0f, 0.0f, 0.0f);
             Quaternion result = Quaternion::Lerp(a, b, 0.5f);
-            // Note: Lerp result should be normalized, so this might not be exactly (0.5, 0, 0, 0.5)
-            AssertQuaternionEqual(Quaternion(0.5f, 0.0f, 0.0f, 0.5f), result);
+            float expected = MathF::Sqrt(2.0f) / 2.0f;
+            AssertQuaternionEqual(Quaternion(expected, 0.0f, 0.0f, expected), result);
         }
 
         TEST_METHOD(LerpUnclamped_TNegative_ExtrapolatesBackward)
@@ -454,7 +454,7 @@ namespace Nudge
             Vector3 up(0.0f, 1.0f, 0.0f);
             Quaternion quat = Quaternion::LookRotation(forward, up);
 
-            Vector3 transformedForward = quat * Vector3(0.0f, 0.0f, 1.0f); // Default forward
+            Vector3 transformedForward = quat * Vector3(0.0f, 0.0f, -1.0f); // Default forward
             AssertVector3Equal(forward.Normalized(), transformedForward.Normalized(), 0.001f);
         }
 
