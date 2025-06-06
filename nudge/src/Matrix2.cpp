@@ -88,8 +88,8 @@ namespace Nudge
 
 		return Matrix2
 		{
-			cos(theta), -sin(theta),
-			sin(theta), cos(theta)
+			MathF::Cos(theta), -MathF::Sin(theta),
+			MathF::Sin(theta), MathF::Cos(theta)
 		};
 	}
 
@@ -363,7 +363,7 @@ namespace Nudge
 	}
 
 	/**
-	 * Equality comparison operator using floating-point tolerance
+	 * Equality comparison operator uMathF::Sing floating-point tolerance
 	 * @param rhs Matrix to compare with
 	 * @return True if matrices are approximately equal
 	 */

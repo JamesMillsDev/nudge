@@ -37,7 +37,7 @@ namespace Nudge
 	 */
 	float Vector4::Distance(const Vector4& lhs, const Vector4& rhs)
 	{
-		return sqrtf(DistanceSqr(lhs, rhs));
+		return MathF::Sqrt(DistanceSqr(lhs, rhs));
 	}
 
 	/**
@@ -67,7 +67,7 @@ namespace Nudge
 			return 0.f;
 		}
 
-		return acos(vec.z / mag);
+		return MathF::Acos(vec.z / mag);
 	}
 
 	/**
@@ -90,7 +90,7 @@ namespace Nudge
 		float cosAngle = dot / lengths;
 		cosAngle = MathF::Clamp(cosAngle, -1.0f, 1.0f);
 
-		return acos(cosAngle);
+		return MathF::Acos(cosAngle);
 	}
 
 	/**
@@ -146,10 +146,10 @@ namespace Nudge
 	{
 		return Vector4
 		{
-			fminf(lhs.x, rhs.x),
-			fminf(lhs.y, rhs.y),
-			fminf(lhs.z, rhs.z),
-			fminf(lhs.w, rhs.w)
+			MathF::Min(lhs.x, rhs.x),
+			MathF::Min(lhs.y, rhs.y),
+			MathF::Min(lhs.z, rhs.z),
+			MathF::Min(lhs.w, rhs.w)
 		};
 	}
 
@@ -163,10 +163,10 @@ namespace Nudge
 	{
 		return Vector4
 		{
-			fmaxf(lhs.x, rhs.x),
-			fmaxf(lhs.y, rhs.y),
-			fmaxf(lhs.z, rhs.z),
-			fmaxf(lhs.w, rhs.w)
+			MathF::Max(lhs.x, rhs.x),
+			MathF::Max(lhs.y, rhs.y),
+			MathF::Max(lhs.z, rhs.z),
+			MathF::Max(lhs.w, rhs.w)
 		};
 	}
 
@@ -313,7 +313,7 @@ namespace Nudge
 	 */
 	float Vector4::Magnitude() const
 	{
-		return sqrtf(MagnitudeSqr());
+		return MathF::Sqrt(MagnitudeSqr());
 	}
 
 	/**

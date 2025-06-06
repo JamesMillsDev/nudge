@@ -75,8 +75,8 @@ namespace Nudge
 	Matrix3 Matrix3::RotationX(float degrees)
 	{
 		const float theta = MathF::Radians(degrees);
-		const float cosTheta = cosf(theta);
-		const float sinTheta = sinf(theta);
+		const float cosTheta = MathF::Cos(theta);
+		const float sinTheta = MathF::Sin(theta);
 
 		return Matrix3
 		{
@@ -94,8 +94,8 @@ namespace Nudge
 	Matrix3 Matrix3::RotationY(float degrees)
 	{
 		const float theta = MathF::Radians(degrees);
-		const float cosTheta = cosf(theta);
-		const float sinTheta = sinf(theta);
+		const float cosTheta = MathF::Cos(theta);
+		const float sinTheta = MathF::Sin(theta);
 
 		return Matrix3
 		{
@@ -113,8 +113,8 @@ namespace Nudge
 	Matrix3 Matrix3::RotationZ(float degrees)
 	{
 		const float theta = MathF::Radians(degrees);
-		const float cosTheta = cosf(theta);
-		const float sinTheta = sinf(theta);
+		const float cosTheta = MathF::Cos(theta);
+		const float sinTheta = MathF::Sin(theta);
 
 		return Matrix3
 		{
@@ -143,8 +143,8 @@ namespace Nudge
 	Matrix3 Matrix3::Rotation(const Vector3& axis, float degrees)
 	{
 		const float theta = MathF::Radians(degrees);
-		const float cosTheta = cosf(theta);
-		const float sinTheta = sinf(theta);
+		const float cosTheta = MathF::Cos(theta);
+		const float sinTheta = MathF::Sin(theta);
 
 		const float oneMinusCos = 1 - cosTheta;
 

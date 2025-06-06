@@ -10,9 +10,9 @@
 
 #include <format>
 
+#include "Nudge/MathF.hpp"
 #include "Nudge/Vector2.hpp"
 #include "Nudge/Vector4.hpp"
-#include "Nudge/MathF.hpp"
 
 using std::runtime_error;
 
@@ -37,7 +37,7 @@ namespace Nudge
 	 */
 	float Vector3::Distance(const Vector3& lhs, const Vector3& rhs)
 	{
-		return sqrtf(DistanceSqr(lhs, rhs));
+		return MathF::Sqrt(DistanceSqr(lhs, rhs));
 	}
 
 	/**
@@ -66,7 +66,7 @@ namespace Nudge
 			return 0.f;
 		}
 
-		return acos(vec.z / mag);
+		return MathF::Acos(vec.z / mag);
 	}
 
 	/**
@@ -89,7 +89,7 @@ namespace Nudge
 		float cosAngle = dot / lengths;
 		cosAngle = MathF::Clamp(cosAngle, -1.0f, 1.0f);
 
-		return acos(cosAngle);
+		return MathF::Acos(cosAngle);
 	}
 
 	/**
@@ -141,7 +141,7 @@ namespace Nudge
 	 */
 	Vector3 Vector3::Min(const Vector3& lhs, const Vector3& rhs)
 	{
-		return Vector3{ fminf(lhs.x, rhs.x), fminf(lhs.y, rhs.y), fminf(lhs.z, rhs.z) };
+		return Vector3{ MathF::Min(lhs.x, rhs.x), MathF::Min(lhs.y, rhs.y), MathF::Min(lhs.z, rhs.z) };
 	}
 
 	/**
@@ -152,7 +152,7 @@ namespace Nudge
 	 */
 	Vector3 Vector3::Max(const Vector3& lhs, const Vector3& rhs)
 	{
-		return Vector3{ fmaxf(lhs.x, rhs.x), fmaxf(lhs.y, rhs.y), fmaxf(lhs.z, rhs.z) };
+		return Vector3{ MathF::Max(lhs.x, rhs.x), MathF::Max(lhs.y, rhs.y), MathF::Max(lhs.z, rhs.z) };
 	}
 
 	/**
@@ -296,7 +296,7 @@ namespace Nudge
 	 */
 	float Vector3::Magnitude() const
 	{
-		return sqrtf(MagnitudeSqr());
+		return MathF::Sqrt(MagnitudeSqr());
 	}
 
 	/**

@@ -50,7 +50,7 @@ namespace Nudge
 	 */
 	float Vector2::Distance(const Vector2& lhs, const Vector2& rhs)
 	{
-		return sqrtf(DistanceSqr(lhs, rhs));
+		return MathF::Sqrt(DistanceSqr(lhs, rhs));
 	}
 
 	/**
@@ -79,7 +79,7 @@ namespace Nudge
 	 */
 	float Vector2::AngleOf(const Vector2& vec)
 	{
-		return atan2f(vec.y, vec.x);
+		return MathF::Atan2(vec.y, vec.x);
 	}
 
 	/**
@@ -104,7 +104,7 @@ namespace Nudge
 
 		// Clamp the cosine value to prevent floating-point precision errors
 		// that could cause acos to return NaN
-		return acosf(MathF::Clamp(Dot(lhs, rhs) / magProduct, -1.f, 1.f));
+		return MathF::Acos(MathF::Clamp(Dot(lhs, rhs) / magProduct, -1.f, 1.f));
 	}
 
 	/**
@@ -168,7 +168,7 @@ namespace Nudge
 	 */
 	Vector2 Vector2::Min(const Vector2& lhs, const Vector2& rhs)
 	{
-		return Vector2{ fminf(lhs.x, rhs.x), fminf(lhs.y, rhs.y) };
+		return Vector2{ MathF::Min(lhs.x, rhs.x), MathF::Min(lhs.y, rhs.y) };
 	}
 
 	/**
@@ -183,7 +183,7 @@ namespace Nudge
 	 */
 	Vector2 Vector2::Max(const Vector2& lhs, const Vector2& rhs)
 	{
-		return Vector2{ fmaxf(lhs.x, rhs.x), fmaxf(lhs.y, rhs.y) };
+		return Vector2{ MathF::Max(lhs.x, rhs.x), MathF::Max(lhs.y, rhs.y) };
 	}
 
 	/**
@@ -347,7 +347,7 @@ namespace Nudge
 	 */
 	float Vector2::Magnitude() const
 	{
-		return sqrtf(MagnitudeSqr());
+		return MathF::Sqrt(MagnitudeSqr());
 	}
 
 	/**
