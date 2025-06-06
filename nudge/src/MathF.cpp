@@ -658,7 +658,7 @@ namespace Nudge
 	{
 		if (Abs(target - current) <= maxDelta)
 		{
-			return current;
+			return target;
 		}
 
 		return current + Sign(target - current) * maxDelta;

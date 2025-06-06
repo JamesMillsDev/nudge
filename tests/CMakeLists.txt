@@ -6,6 +6,7 @@ add_library(NudgeTests SHARED
     Matrix3Tests.cpp
     Vector4Tests.cpp
     Matrix4Tests.cpp
+    MathFTests.cpp
 )
 
 # Always link to nudge library
