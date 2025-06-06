@@ -33,6 +33,16 @@ set_target_properties(nudge PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
 )
 
+# Simple install - just copy library and headers
+install(TARGETS nudge
+    ARCHIVE DESTINATION lib
+)
+
+install(DIRECTORY include/
+    DESTINATION include
+    FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp" PATTERN "*.hxx"
+)
+
 # Optional: Print found files for debugging
 message(STATUS "Nudge source files found:")
 foreach(source ${NUDGE_SOURCES})
