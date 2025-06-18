@@ -70,19 +70,15 @@ int main() {
 
 ## API Reference
 
-### Core Classes
-
-- `nudge::PhysicsWorld` - Main simulation environment
-- `nudge::RigidBody` - Physics objects with mass and velocity
-- `nudge::Collider` - Collision shapes (Box, Sphere, Mesh)
-- `nudge::Constraint` - Physics constraints and joints
-
 ### Mathematics
 
+- `nudge::Vector2` - 2D vector operations
 - `nudge::Vector3` - 3D vector operations
-- `nudge::Matrix4` - 4x4 transformation matrices
+- `nudge::Vector4` - 4D vector operations
+- `nudge::Matrix2x2` - 2x2 matrix operations
+- `nudge::Matrix3x3` - 3x3 matrix operations
+- `nudge::Matrix4x4` - 4x4 transformation matrices
 - `nudge::Quaternion` - Rotation representation
-- `nudge::Transform` - Position, rotation, and scale
 
 ## Requirements
 
