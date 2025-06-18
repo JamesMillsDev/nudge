@@ -23,5 +23,6 @@ CMakeUserPresets.json
 out/
 .vs/
 build/
+install/
 
 # End of https://www.toptal.com/developers/gitignore/api/cmake
