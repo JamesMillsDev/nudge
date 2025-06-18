@@ -21,7 +21,7 @@ Nudge provides a complete solution for 3D physics simulation with an integrated 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/JamesMillsAIE/nudge.git
+git clone https://github.com/JamesMillsDev/nudge.git
 cd nudge
 ```
 
