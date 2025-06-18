@@ -14,9 +14,6 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       
-    - name: Setup MSBuild
-      uses: microsoft/setup-msbuild@v2
-      
     - name: Setup CMake
       uses: jwlawson/actions-setup-cmake@v2
       with:
@@ -28,36 +25,22 @@ jobs:
     - name: Build project
       run: cmake --build build --config Release
       
-    - name: Setup VSTest
-      uses: darenm/Setup-VSTest@v1.2
-      
-    - name: List build output (for debugging)
+    - name: Run GTests
       run: |
-        echo "Contents of build directory:"
-        dir build /s /b *.dll
-        echo "Contents of tests directory (if exists):"
-        if (Test-Path tests) { dir tests /s /b *.dll } else { echo "tests directory not found" }
-      
-    - name: Run MS Tests
-      run: |
-        $testDlls = Get-ChildItem -Path "build" -Recurse -Filter "*.dll" | Where-Object { $_.Name -match "test" -or $_.Directory.Name -match "test" }
-        if ($testDlls.Count -eq 0) {
-          echo "No test DLLs found"
+        $testExes = Get-ChildItem -Path "build" -Recurse -Filter "*.exe" | Where-Object { $_.Name -match "test" }
+        if ($testExes.Count -eq 0) {
+          echo "No test executables found"
           exit 1
         }
-        $testPaths = $testDlls | ForEach-Object { $_.FullName }
-        echo "Found test DLLs: $($testPaths -join ', ')"
-        vstest.console.exe $testPaths --logger:trx --resultsDirectory:TestResults
-      continue-on-error: false
+        foreach ($testExe in $testExes) {
+          echo "Running tests: $($testExe.FullName)"
+          & $testExe.FullName --gtest_output=xml:$($testExe.BaseName)_results.xml
+          if ($LASTEXITCODE -ne 0) {
+            echo "Tests failed in $($testExe.Name)"
+            exit $LASTEXITCODE
+          }
+        }
       
-    - name: Publish test results
-      uses: dorny/test-reporter@v1
-      if: always()
-      with:
-        name: MS Test Results
-        path: TestResults/*.trx
-        reporter: dotnet-trx
-        
     - name: Install project
       run: cmake --install build --prefix install --config Release
       
@@ -68,10 +51,10 @@ jobs:
         path: install/
         retention-days: 30
         
-    - name: Archive test results
+    - name: Upload test results
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: test-results-${{ github.sha }}
-        path: TestResults/
+        path: "*_results.xml"
         retention-days: 7
