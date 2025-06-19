@@ -105,6 +105,16 @@ namespace Nudge
 		return a * (1.f - t) + b * t;
 	}
 
+	Vector3 Vector3::Project(const Vector3& length, const Vector3& direction)
+	{
+		if (MathF::IsNearZero(direction.MagnitudeSqr()))
+		{
+			return {};
+		}
+
+		return direction * (Dot(length, direction) / direction.MagnitudeSqr());
+	}
+
 	/**
 	 * Reflects a vector off a surface with the given normal
 	 * @param inDirection The incoming direction vector

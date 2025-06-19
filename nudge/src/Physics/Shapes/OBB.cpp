@@ -5,6 +5,7 @@
 #include "Nudge/Physics/Shapes/Interval.hpp"
 #include "Nudge/Physics/Shapes/Plane.hpp"
 #include "Nudge/Physics/Shapes/Sphere.hpp"
+#include "Nudge/Physics/Shapes/Triangle.hpp"
 
 namespace Nudge
 {
@@ -61,17 +62,17 @@ namespace Nudge
 		return result;
 	}
 
-	bool Obb::Overlaps(const Aabb& other) const
+	bool Obb::Intersects(const Aabb& other) const
 	{
-		return other.Overlaps(*this);
+		return other.Intersects(*this);
 	}
 
-	bool Obb::Overlaps(const Obb& other) const
+	bool Obb::Intersects(const Obb& other) const
 	{
 		return Interval::ObbObb(*this, other);
 	}
 
-	bool Obb::Overlaps(const Plane& other) const
+	bool Obb::Intersects(const Plane& other) const
 	{
 		const float pLen = extents.x * MathF::Abs(Vector3::Dot(other.normal, orientation.GetColumn(0))) +
 		             extents.y * MathF::Abs(Vector3::Dot(other.normal, orientation.GetColumn(1))) +
@@ -82,8 +83,13 @@ namespace Nudge
 		return MathF::Abs(dist) <= pLen;
 	}
 
-	bool Obb::Overlaps(const Sphere& other) const
+	bool Obb::Intersects(const Sphere& other) const
 	{
-		return other.Overlaps(*this);
+		return other.Intersects(*this);
+	}
+
+	bool Obb::Intersects(const Triangle& other) const
+	{
+		return other.Intersects(*this);
 	}
 }

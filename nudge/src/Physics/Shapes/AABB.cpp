@@ -4,6 +4,7 @@
 #include "Nudge/Physics/Shapes/Interval.hpp"
 #include "Nudge/Physics/Shapes/Plane.hpp"
 #include "Nudge/Physics/Shapes/Sphere.hpp"
+#include "Nudge/Physics/Shapes/Triangle.hpp"
 
 namespace Nudge
 {
@@ -64,7 +65,7 @@ namespace Nudge
 		return result;
 	}
 
-	bool Aabb::Overlaps(const Aabb& other) const
+	bool Aabb::Intersects(const Aabb& other) const
 	{
 		const Vector3 aMin = Min();
 		const Vector3 aMax = Max();
@@ -77,12 +78,12 @@ namespace Nudge
 		       aMin.z <= bMax.z && aMax.z >= bMin.z;
 	}
 
-	bool Aabb::Overlaps(const Obb& other) const
+	bool Aabb::Intersects(const Obb& other) const
 	{
 		return Interval::AabbObb(*this, other);
 	}
 
-	bool Aabb::Overlaps(const Plane& other) const
+	bool Aabb::Intersects(const Plane& other) const
 	{
 		const float pLen = extents.x * MathF::Abs(other.normal.x) +
 		             extents.y * MathF::Abs(other.normal.y) +
@@ -93,8 +94,13 @@ namespace Nudge
 		return MathF::Abs(dot - other.distance) <= pLen;
 	}
 
-	bool Aabb::Overlaps(const Sphere& other) const
+	bool Aabb::Intersects(const Sphere& other) const
 	{
-		return other.Overlaps(*this);
+		return other.Intersects(*this);
+	}
+
+	bool Aabb::Intersects(const Triangle& other) const
+	{
+		return other.Intersects(*this);
 	}
 }

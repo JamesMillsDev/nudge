@@ -4,6 +4,7 @@
 #include "Nudge/Physics/Shapes/AABB.hpp"
 #include "Nudge/Physics/Shapes/OBB.hpp"
 #include "Nudge/Physics/Shapes/Plane.hpp"
+#include "Nudge/Physics/Shapes/Triangle.hpp"
 
 namespace Nudge
 {
@@ -30,7 +31,7 @@ namespace Nudge
 		return (point - origin).Normalized() + origin;
 	}
 
-	bool Sphere::Overlaps(const Sphere& other) const
+	bool Sphere::Intersects(const Sphere& other) const
 	{
 		const float radiiSum = MathF::Squared(radius + other.radius);
 		const float sqrDist = (origin - other.origin).MagnitudeSqr();
@@ -38,7 +39,7 @@ namespace Nudge
 		return sqrDist < radiiSum;
 	}
 
-	bool Sphere::Overlaps(const Aabb& other) const
+	bool Sphere::Intersects(const Aabb& other) const
 	{
 		const Vector3 closest = other.ClosestPoint(origin);
 		const float distSqr = (origin - closest).MagnitudeSqr();
@@ -46,7 +47,7 @@ namespace Nudge
 		return distSqr < MathF::Squared(radius);
 	}
 
-	bool Sphere::Overlaps(const Obb& other) const
+	bool Sphere::Intersects(const Obb& other) const
 	{
 		const Vector3 closest = other.ClosestPoint(origin);
 		const float distSqr = (origin - closest).MagnitudeSqr();
@@ -54,11 +55,16 @@ namespace Nudge
 		return distSqr < MathF::Squared(radius);
 	}
 
-	bool Sphere::Overlaps(const Plane& other) const
+	bool Sphere::Intersects(const Plane& other) const
 	{
 		const Vector3 closest = other.ClosestPoint(origin);
 		const float distSqr = (origin - closest).MagnitudeSqr();
 
 		return distSqr < MathF::Squared(radius);
+	}
+
+	bool Sphere::Intersects(const Triangle& other) const
+	{
+		return other.Intersects(*this);
 	}
 }

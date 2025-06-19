@@ -8,6 +8,7 @@ namespace Nudge
 	class Obb;
 	class Plane;
 	class Sphere;
+	class Triangle;
 
 	/**
 	 * @brief Represents a line segment in 3D space defined by two endpoints
@@ -105,5 +106,31 @@ namespace Nudge
 		 * @return True if the line segment intersects or is contained within the sphere
 		 */
 		bool Test(const Sphere& other) const;
+
+		/**
+		 * @brief Tests if the line segment intersects with a triangle
+		 * @param other Triangle to test intersection against
+		 * @return True if the line segment intersects the triangle
+		 *
+		 * This method determines whether the finite line segment crosses, touches, or
+		 * passes through the triangle in 3D space. The test involves:
+		 * 1. Converting the line segment to a ray representation
+		 * 2. Performing ray-triangle intersection using plane intersection + barycentric coordinates
+		 * 3. Validating that the intersection point lies within the line segment bounds
+		 *
+		 * The intersection is considered valid if:
+		 * - The ray intersects the triangle's plane
+		 * - The intersection point lies within the triangle's boundaries
+		 * - The intersection occurs between the line segment's start and end points
+		 *
+		 * @note This test is more computationally expensive than primitive shape tests
+		 *       due to the underlying barycentric coordinate calculations
+		 * @note Unlike ray-triangle intersection, this method respects the finite nature
+		 *       of the line segment and will return false for intersections beyond the endpoints
+		 * @see Ray::CastAgainst(const Triangle&) for the underlying intersection algorithm
+		 * @see Test(const Plane&) for simpler plane intersection testing
+		 */
+		bool Test(const Triangle& other) const;
+
 	};
 }

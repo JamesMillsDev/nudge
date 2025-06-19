@@ -4,9 +4,20 @@
 #include "Nudge/Physics/Shapes/AABB.hpp"
 #include "Nudge/Physics/Shapes/OBB.hpp"
 #include "Nudge/Physics/Shapes/Sphere.hpp"
+#include "Nudge/Physics/Shapes/Triangle.hpp"
 
 namespace Nudge
 {
+	Plane Plane::From(const Triangle& tri)
+	{
+		Plane result;
+
+		result.normal = Vector3::Cross(tri.b - tri.a, tri.c - tri.a).Normalized();
+		result.distance = Vector3::Dot(result.normal, tri.a);
+
+		return result;
+	}
+
 	float Plane::PlaneEquation(const Vector3& point, const Plane& plane)
 	{
 		return Vector3::Dot(point, plane.normal) - plane.distance;
@@ -34,25 +45,30 @@ namespace Nudge
 		return point - normal * dist;
 	}
 
-	bool Plane::Overlaps(const Aabb& other) const
+	bool Plane::Intersects(const Aabb& other) const
 	{
-		return other.Overlaps(*this);
+		return other.Intersects(*this);
 	}
 
-	bool Plane::Overlaps(const Obb& other) const
+	bool Plane::Intersects(const Obb& other) const
 	{
-		return other.Overlaps(*this);
+		return other.Intersects(*this);
 	}
 
-	bool Plane::Overlaps(const Plane& other) const
+	bool Plane::Intersects(const Plane& other) const
 	{
 		const Vector3 d = Vector3::Cross(normal, other.normal);
 
 		return !MathF::IsNearZero(Vector3::Dot(d, d));
 	}
 
-	bool Plane::Overlaps(const Sphere& other) const
+	bool Plane::Intersects(const Sphere& other) const
 	{
-		return other.Overlaps(*this);
+		return other.Intersects(*this);
+	}
+
+	bool Plane::Intersects(const Triangle& other) const
+	{
+		return other.Intersects(*this);
 	}
 }

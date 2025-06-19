@@ -5,6 +5,7 @@
 #include "Nudge/Physics/Shapes/OBB.hpp"
 #include "Nudge/Physics/Shapes/Plane.hpp"
 #include "Nudge/Physics/Shapes/Sphere.hpp"
+#include "Nudge/Physics/Shapes/Triangle.hpp"
 
 using std::numeric_limits;
 
@@ -90,8 +91,8 @@ namespace Nudge
 		const Vector3 max = other.Max();
 
 		// Initialize intersection parameter range
-		float tMin = 0.f;                                    // Near intersection distance
-		float tMax = numeric_limits<float>::infinity();      // Far intersection distance
+		float tMin = 0.f;                               // Near intersection distance
+		float tMax = numeric_limits<float>::infinity(); // Far intersection distance
 
 		// Test intersection with each pair of parallel planes (slabs)
 		for (int i = 0; i < 3; ++i)
@@ -101,14 +102,14 @@ namespace Nudge
 				// Ray is parallel to this slab - check if origin is within slab bounds
 				if (origin[i] < min[i] || origin[i] > max[i])
 				{
-					return -1.f;  // Ray misses the AABB entirely
+					return -1.f; // Ray misses the AABB entirely
 				}
 			}
 			else
 			{
 				// Calculate intersection distances with both planes of this slab
-				float t1 = (min[i] - origin[i]) / direction[i];  // Distance to min plane
-				float t2 = (max[i] - origin[i]) / direction[i];  // Distance to max plane
+				float t1 = (min[i] - origin[i]) / direction[i]; // Distance to min plane
+				float t2 = (max[i] - origin[i]) / direction[i]; // Distance to max plane
 
 				// Ensure t1 is the near plane and t2 is the far plane
 				if (t1 > t2)
@@ -117,8 +118,8 @@ namespace Nudge
 				}
 
 				// Update the intersection parameter range
-				tMin = MathF::Max(tMin, t1);  // Latest entry point
-				tMax = MathF::Min(tMax, t2);  // Earliest exit point
+				tMin = MathF::Max(tMin, t1); // Latest entry point
+				tMax = MathF::Min(tMax, t2); // Earliest exit point
 
 				// No intersection if entry point is after exit point
 				if (tMin > tMax)
@@ -146,9 +147,9 @@ namespace Nudge
 	float Ray::CastAgainst(const Obb& other) const
 	{
 		// Get OBB's local coordinate system axes
-		const Vector3 x = other.orientation.GetColumn(0);  // OBB's local X-axis
-		const Vector3 y = other.orientation.GetColumn(1);  // OBB's local Y-axis
-		const Vector3 z = other.orientation.GetColumn(2);  // OBB's local Z-axis
+		const Vector3 x = other.orientation.GetColumn(0); // OBB's local X-axis
+		const Vector3 y = other.orientation.GetColumn(1); // OBB's local Y-axis
+		const Vector3 z = other.orientation.GetColumn(2); // OBB's local Z-axis
 
 		// Vector from ray origin to OBB center
 		const Vector3 p = other.origin - origin;
@@ -156,17 +157,17 @@ namespace Nudge
 		// Transform ray direction into OBB local space
 		const Vector3 f =
 		{
-			Vector3::Dot(x, direction),  // Ray direction component along OBB's X-axis
-			Vector3::Dot(y, direction),  // Ray direction component along OBB's Y-axis
-			Vector3::Dot(z, direction)   // Ray direction component along OBB's Z-axis
+			Vector3::Dot(x, direction), // Ray direction component along OBB's X-axis
+			Vector3::Dot(y, direction), // Ray direction component along OBB's Y-axis
+			Vector3::Dot(z, direction)  // Ray direction component along OBB's Z-axis
 		};
 
 		// Transform ray origin relative to OBB center into OBB local space
 		const Vector3 e =
 		{
-			Vector3::Dot(x, p),  // Distance from ray origin to OBB center along OBB's X-axis
-			Vector3::Dot(y, p),  // Distance from ray origin to OBB center along OBB's Y-axis
-			Vector3::Dot(z, p)   // Distance from ray origin to OBB center along OBB's Z-axis
+			Vector3::Dot(x, p), // Distance from ray origin to OBB center along OBB's X-axis
+			Vector3::Dot(y, p), // Distance from ray origin to OBB center along OBB's Y-axis
+			Vector3::Dot(z, p)  // Distance from ray origin to OBB center along OBB's Z-axis
 		};
 
 		float tMin = 0.0f;
@@ -180,14 +181,14 @@ namespace Nudge
 				// Ray is parallel to this slab - check if ray origin is within slab bounds
 				if (MathF::Abs(e[i]) > other.extents[i])
 				{
-					return -1.f;  // Ray misses the OBB entirely
+					return -1.f; // Ray misses the OBB entirely
 				}
 			}
 			else
 			{
 				// Calculate intersection distances with both planes of this slab
-				float t1 = (e[i] + other.extents[i]) / f[i];  // Distance to positive extent plane
-				float t2 = (e[i] - other.extents[i]) / f[i];  // Distance to negative extent plane
+				float t1 = (e[i] + other.extents[i]) / f[i]; // Distance to positive extent plane
+				float t2 = (e[i] - other.extents[i]) / f[i]; // Distance to negative extent plane
 
 				// Ensure t1 is the near plane and t2 is the far plane
 				if (t1 > t2)
@@ -196,8 +197,8 @@ namespace Nudge
 				}
 
 				// Update the intersection parameter range
-				tMin = MathF::Max(tMin, t1);  // Latest entry point
-				tMax = MathF::Min(tMax, t2);  // Earliest exit point
+				tMin = MathF::Max(tMin, t1); // Latest entry point
+				tMax = MathF::Min(tMax, t2); // Earliest exit point
 
 				// No intersection if entry point is after exit point
 				if (tMin > tMax)
@@ -233,7 +234,7 @@ namespace Nudge
 		// Check if ray is parallel to plane or pointing away from it
 		if (nd >= 0.f)
 		{
-			return -1.f;  // No intersection (parallel or pointing away)
+			return -1.f; // No intersection (parallel or pointing away)
 		}
 
 		// Calculate intersection parameter using plane equation: dot(point, normal) = distance
@@ -255,13 +256,13 @@ namespace Nudge
 		const Vector3 e = other.origin - origin;
 
 		// Precompute squared values to avoid repeated calculations
-		const float rSqr = MathF::Squared(other.radius);      // Sphere radius squared
-		const float eSqr = e.MagnitudeSqr();                  // Distance squared from ray origin to sphere center
+		const float rSqr = MathF::Squared(other.radius); // Sphere radius squared
+		const float eSqr = e.MagnitudeSqr();             // Distance squared from ray origin to sphere center
 
 		// Project sphere center onto ray direction
-		const float a = Vector3::Dot(e, direction);           // Distance along ray to the closest approach point
-		const float aSqr = MathF::Squared(a);                 // Squared distance along ray
-		const float bSqr = eSqr - aSqr;                       // Squared perpendicular distance from ray to sphere center
+		const float a = Vector3::Dot(e, direction); // Distance along ray to the closest approach point
+		const float aSqr = MathF::Squared(a);       // Squared distance along ray
+		const float bSqr = eSqr - aSqr;             // Squared perpendicular distance from ray to sphere center
 
 		// Calculate discriminant for intersection test
 		const float discriminant = rSqr - bSqr;
@@ -276,6 +277,44 @@ namespace Nudge
 		const float f = MathF::Sqrt(discriminant);
 
 		// Return appropriate intersection based on ray origin position relative to sphere
-		return eSqr < rSqr ? a + f : a - f;  // Inside sphere: far intersection, Outside sphere: near intersection
+		return eSqr < rSqr ? a + f : a - f; // Inside sphere: far intersection, Outside sphere: near intersection
+	}
+
+	/**
+	 * @brief Performs ray-triangle intersection using the two-phase approach
+	 * @param tri Triangle to test intersection against
+	 * @return Distance along ray to intersection point, or -1 if no intersection
+	 *
+	 * Algorithm:
+	 * 1. First intersect ray with the triangle's plane
+	 * 2. Then check if the intersection point lies within the triangle using barycentric coordinates
+	 */
+	float Ray::CastAgainst(const Triangle& tri) const
+	{
+		// Phase 1: Ray-Plane Intersection
+		// Create a plane from the triangle and test intersection
+		const Plane plane = Plane::From(tri);
+
+		const float t = CastAgainst(plane);
+		if (t < 0.f)
+		{
+			return t;  // No intersection with plane, or intersection is behind ray origin
+		}
+
+		// Phase 2: Point-in-Triangle Test
+		// Calculate the intersection point on the plane
+		const Vector3 result = origin + direction * t;
+
+		// Convert world space point to barycentric coordinates relative to triangle
+		const Vector3 barycentric = tri.Barycentric(result);
+
+		// Explicit validation with sum check)
+		if (barycentric.x >= 0.0f && barycentric.y >= 0.0f && barycentric.z >= 0.0f &&
+			MathF::Compare(barycentric.x + barycentric.y + barycentric.z, 1.0f))
+		{
+			return t;
+		}
+
+		return -1.f;  // Point lies outside triangle bounds
 	}
 }

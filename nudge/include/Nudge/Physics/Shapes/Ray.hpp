@@ -8,6 +8,7 @@ namespace Nudge
 	class Obb;
 	class Plane;
 	class Sphere;
+	class Triangle;
 
 	/**
 	 * @brief Represents a ray in 3D space with an origin point and direction vector
@@ -96,5 +97,24 @@ namespace Nudge
 		 * @return Distance along ray to intersection point, or -1 if no intersection
 		 */
 		float CastAgainst(const Sphere& other) const;
+
+		/**
+		 * @brief Performs ray-triangle intersection test using plane intersection and barycentric coordinates
+		 * @param tri Triangle to test intersection against
+		 * @return Distance along ray to intersection point, or -1 if no intersection
+		 *
+		 * This method uses a two-phase approach:
+		 * 1. First tests ray intersection with the triangle's containing plane
+		 * 2. Then validates that the intersection point lies within the triangle bounds
+		 *    using barycentric coordinate testing
+		 *
+		 * The returned distance can be used to calculate the exact intersection point:
+		 * intersectionPoint = ray.origin + ray.direction * returnedDistance
+		 *
+		 * @note This is more expensive than basic primitive tests due to the barycentric
+		 *       coordinate calculation, but provides precise triangle intersection detection
+		 * @see CastAgainst(const Plane&) for the underlying plane intersection logic
+		 */
+		float CastAgainst(const Triangle& tri) const;
 	};
 }
