@@ -3,11 +3,11 @@
 
 #include <gtest/gtest.h>
 
-#include "Nudge/MathF.hpp"
-#include "Nudge/Matrix2.hpp"
-#include "Nudge/Matrix3.hpp"
-#include "Nudge/Vector2.hpp"
-#include "Nudge/Vector3.hpp"
+#include "Nudge/Maths/MathF.hpp"
+#include "Nudge/Maths/Matrix2.hpp"
+#include "Nudge/Maths/Matrix3.hpp"
+#include "Nudge/Maths/Vector2.hpp"
+#include "Nudge/Maths/Vector3.hpp"
 
 using std::runtime_error;
 using std::numbers::pi_v;
