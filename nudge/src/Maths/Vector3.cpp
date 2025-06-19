@@ -548,6 +548,35 @@ namespace Nudge
 	}
 
 	/**
+	 * Array subscript operator for read-write access
+	 * @param index Index (0=x, 1=y, 2=z)
+	 * @return Component value at the specified index
+	 * @throws runtime_error If index is out of bounds
+	 */
+	float& Vector3::operator[](int index)
+	{
+		switch (index)
+		{
+		case 0:
+		{
+			return x;
+		}
+		case 1:
+		{
+			return y;
+		}
+		case 2:
+		{
+			return z;
+		}
+		default:
+		{
+			throw runtime_error("Index out of bounds!");
+		}
+		}
+	}
+
+	/**
 	 * Assignment operator
 	 * @param rhs Vector to assign from
 	 * @return Reference to this vector after assignment

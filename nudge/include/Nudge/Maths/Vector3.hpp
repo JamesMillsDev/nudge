@@ -360,6 +360,14 @@ namespace Nudge
 		float operator[](int index) const;
 
 		/**
+		 * @brief Component access operator.
+		 * @param index The component index (0 for x, 1 for y, 2 for z)
+		 * @return The component value at the specified index
+		 * @throws std::runtime_error if index is out of bounds
+		 */
+		float& operator[](int index);
+
+		/**
 		 * @brief Copy assignment operator.
 		 * @param rhs The vector to copy from
 		 * @return Reference to this vector after assignment
