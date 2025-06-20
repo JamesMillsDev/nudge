@@ -6,13 +6,12 @@
  * mathematical operations, utility functions, constructors, and operators.
  */
 
-#include "nudge/Vector3.hpp"
+#include "nudge/Maths/Vector3.hpp"
+#include "Nudge/Maths/MathF.hpp"
+#include "Nudge/Maths/Vector2.hpp"
+#include "Nudge/Maths/Vector4.hpp"
 
 #include <format>
-
-#include "Nudge/MathF.hpp"
-#include "Nudge/Vector2.hpp"
-#include "Nudge/Vector4.hpp"
 
 using std::runtime_error;
 
@@ -104,6 +103,16 @@ namespace Nudge
 		t = MathF::Clamp01(t);
 
 		return a * (1.f - t) + b * t;
+	}
+
+	Vector3 Vector3::Project(const Vector3& length, const Vector3& direction)
+	{
+		if (MathF::IsNearZero(direction.MagnitudeSqr()))
+		{
+			return {};
+		}
+
+		return direction * (Dot(length, direction) / direction.MagnitudeSqr());
 	}
 
 	/**
@@ -526,6 +535,35 @@ namespace Nudge
 	 * @throws runtime_error If index is out of bounds
 	 */
 	float Vector3::operator[](int index) const
+	{
+		switch (index)
+		{
+		case 0:
+		{
+			return x;
+		}
+		case 1:
+		{
+			return y;
+		}
+		case 2:
+		{
+			return z;
+		}
+		default:
+		{
+			throw runtime_error("Index out of bounds!");
+		}
+		}
+	}
+
+	/**
+	 * Array subscript operator for read-write access
+	 * @param index Index (0=x, 1=y, 2=z)
+	 * @return Component value at the specified index
+	 * @throws runtime_error If index is out of bounds
+	 */
+	float& Vector3::operator[](int index)
 	{
 		switch (index)
 		{

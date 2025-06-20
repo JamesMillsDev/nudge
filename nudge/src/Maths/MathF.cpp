@@ -3,7 +3,7 @@
  * @brief Implementation of mathematical utility functions for game development
  */
 
-#include "Nudge/MathF.hpp"
+#include "Nudge/Maths/MathF.hpp"
 
 #include <bitset>
 #include <cmath>

@@ -20,16 +20,17 @@ set_target_properties(gtest_main PROPERTIES EXCLUDE_FROM_ALL TRUE)
 set_target_properties(gmock PROPERTIES EXCLUDE_FROM_ALL TRUE)
 set_target_properties(gmock_main PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
+# Recursively glob all source files
+file(GLOB_RECURSE NUDGE_TESTS
+    "*.cpp"
+    "*.c"
+    "*.cxx"
+    "*.cc"
+)
+
 # Create test executable
 add_executable(NudgeTests
-    Vector2Tests.cpp
-    Matrix2Tests.cpp
-    Vector3Tests.cpp
-    Matrix3Tests.cpp
-    Vector4Tests.cpp
-    Matrix4Tests.cpp
-    MathFTests.cpp
-    QuaternionTests.cpp
+    ${NUDGE_TESTS}
 )
 
 # Link libraries

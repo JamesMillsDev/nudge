@@ -91,6 +91,8 @@ namespace Nudge
 		 */
 		static Vector3 Lerp(const Vector3& a, const Vector3& b, float t);
 
+		static Vector3 Project(const Vector3& length, const Vector3& direction);
+
 		/**
 		 * @brief Reflects a vector off a surface defined by a normal.
 		 * @param inDirection The incoming direction vector
@@ -358,6 +360,14 @@ namespace Nudge
 		 * @throws std::runtime_error if index is out of bounds
 		 */
 		float operator[](int index) const;
+
+		/**
+		 * @brief Component access operator.
+		 * @param index The component index (0 for x, 1 for y, 2 for z)
+		 * @return The component value at the specified index
+		 * @throws std::runtime_error if index is out of bounds
+		 */
+		float& operator[](int index);
 
 		/**
 		 * @brief Copy assignment operator.

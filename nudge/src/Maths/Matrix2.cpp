@@ -1,10 +1,9 @@
-#include "Nudge/Matrix2.hpp"
+#include "Nudge/Maths/Matrix2.hpp"
+#include "Nudge/Maths/MathF.hpp"
+#include "Nudge/Maths/Vector2.hpp"
 
 #include <format>
 #include <stdexcept>
-
-#include "Nudge/MathF.hpp"
-#include "Nudge/Vector2.hpp"
 
 using std::runtime_error;
 

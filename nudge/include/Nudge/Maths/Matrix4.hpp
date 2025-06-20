@@ -1,8 +1,6 @@
 /**
  * @file Matrix4.hpp
  * @brief 4x4 Matrix class for 3D transformations using column-major storage
- * @author JamesMillsAIE
- * @date 2025-06-06
  */
 
 #pragma once

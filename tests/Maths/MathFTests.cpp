@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "Nudge/MathF.hpp"
+#include "Nudge/Maths/MathF.hpp"
 
 using std::numbers::pi_v;
 

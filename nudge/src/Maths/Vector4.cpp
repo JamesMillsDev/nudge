@@ -6,13 +6,12 @@
  * mathematical operations, utility functions, constructors, and operators.
  */
 
-#include "Nudge/Vector4.hpp"
+#include "Nudge/Maths/Vector4.hpp"
+#include "Nudge/Maths/MathF.hpp"
+#include "Nudge/Maths/Vector2.hpp"
+#include "Nudge/Maths/Vector3.hpp"
 
 #include <format>
-
-#include "Nudge/MathF.hpp"
-#include "Nudge/Vector2.hpp"
-#include "Nudge/Vector3.hpp"
 
 using std::runtime_error;
 

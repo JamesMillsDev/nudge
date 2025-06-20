@@ -1,16 +1,13 @@
 /**
  * @file Quaternion.cpp
  * @brief Implementation of the Quaternion class for 3D rotations
- * @author JamesMillsAIE
- * @date 2025-06-06
  */
 
-#include "Nudge/Quaternion.hpp"
-
-#include "Nudge/MathF.hpp"
-#include "Nudge/Matrix3.hpp"
-#include "Nudge/Matrix4.hpp"
-#include "nudge/Vector3.hpp"
+#include "Nudge/Maths/Quaternion.hpp"
+#include "Nudge/Maths/MathF.hpp"
+#include "Nudge/Maths/Matrix3.hpp"
+#include "Nudge/Maths/Matrix4.hpp"
+#include "nudge/Maths/Vector3.hpp"
 
 namespace Nudge
 {
