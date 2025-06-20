@@ -1,12 +1,16 @@
-#include "Nudge/Physics/Shapes/Ray.hpp"
+#include "Nudge/Shapes/Ray.hpp"
 
 #include "Nudge/Maths/MathF.hpp"
-#include "Nudge/Physics/Shapes/AABB.hpp"
-#include "Nudge/Physics/Shapes/OBB.hpp"
-#include "Nudge/Physics/Shapes/Plane.hpp"
-#include "Nudge/Physics/Shapes/Sphere.hpp"
-#include "Nudge/Physics/Shapes/Triangle.hpp"
+#include "Nudge/Shapes/AABB.hpp"
+#include "Nudge/Shapes/Mesh.hpp"
+#include "Nudge/Shapes/OBB.hpp"
+#include "Nudge/Shapes/Plane.hpp"
+#include "Nudge/Shapes/Sphere.hpp"
+#include "Nudge/Shapes/Triangle.hpp"
 
+#include <list>
+
+using std::list;
 using std::numeric_limits;
 
 namespace Nudge
@@ -137,6 +141,57 @@ namespace Nudge
 
 		// Return the closest intersection point in front of the ray origin
 		return tMin < 0.f ? tMax : tMin;
+	}
+
+	float Ray::CastAgainst(const Mesh& other) const
+	{
+		if (other.accelerator == nullptr)
+		{
+			for (int i = 0; i < other.numTriangles; ++i)
+			{
+				float result = CastAgainst(other.triangles[i]);
+				if (result >= 0)
+				{
+					return result;
+				}
+			}
+		}
+		else
+		{
+			list<BvhNode*> toProcess;
+			toProcess.emplace_front(other.accelerator);
+
+			while (!toProcess.empty())
+			{
+				BvhNode* iterator = *toProcess.begin();
+				toProcess.erase(toProcess.begin());
+
+				if (iterator->numTriangles >= 0)
+				{
+					for (int i = 0; i < iterator->numTriangles; ++i)
+					{
+						float r = CastAgainst(other.triangles[iterator->triangles[i]]);
+						if (r >= 0)
+						{
+							return r;
+						}
+					}
+				}
+
+				if (iterator->children != nullptr)
+				{
+					for (int i = 8 - 1; i >= 0; --i)
+					{
+						if (CastAgainst(iterator->children[i].bounds) >= 0.f)
+						{
+							toProcess.emplace_front(iterator->children);
+						}
+					}
+				}
+			}
+		}
+
+		return -1.f;
 	}
 
 	/**

@@ -1,9 +1,9 @@
-#include "Nudge/Physics/Shapes/Interval.hpp"
+#include "Nudge/Shapes/Interval.hpp"
 
 #include "Nudge/Maths/MathF.hpp"
-#include "Nudge/Physics/Shapes/AABB.hpp"
-#include "Nudge/Physics/Shapes/OBB.hpp"
-#include "Nudge/Physics/Shapes/Triangle.hpp"
+#include "Nudge/Shapes/AABB.hpp"
+#include "Nudge/Shapes/OBB.hpp"
+#include "Nudge/Shapes/Triangle.hpp"
 
 #include <algorithm>
 

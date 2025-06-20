@@ -1,9 +1,9 @@
-#include "Nudge/Physics/Shapes/Line.hpp"
+#include "Nudge/Shapes/Line.hpp"
 
 #include "Nudge/Maths/MathF.hpp"
-#include "Nudge/Physics/Shapes/Plane.hpp"
-#include "Nudge/Physics/Shapes/Ray.hpp"
-#include "Nudge/Physics/Shapes/Sphere.hpp"
+#include "Nudge/Shapes/Plane.hpp"
+#include "Nudge/Shapes/Ray.hpp"
+#include "Nudge/Shapes/Sphere.hpp"
 
 namespace Nudge
 {

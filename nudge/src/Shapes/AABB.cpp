@@ -1,10 +1,10 @@
-#include "Nudge/Physics/Shapes/AABB.hpp"
+#include "Nudge/Shapes/AABB.hpp"
 
 #include "Nudge/Maths/MathF.hpp"
-#include "Nudge/Physics/Shapes/Interval.hpp"
-#include "Nudge/Physics/Shapes/Plane.hpp"
-#include "Nudge/Physics/Shapes/Sphere.hpp"
-#include "Nudge/Physics/Shapes/Triangle.hpp"
+#include "Nudge/Shapes/Interval.hpp"
+#include "Nudge/Shapes/Plane.hpp"
+#include "Nudge/Shapes/Sphere.hpp"
+#include "Nudge/Shapes/Triangle.hpp"
 
 namespace Nudge
 {

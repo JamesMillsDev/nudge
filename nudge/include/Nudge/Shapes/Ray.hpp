@@ -5,6 +5,7 @@
 namespace Nudge
 {
 	class Aabb;
+	class Mesh;
 	class Obb;
 	class Plane;
 	class Sphere;
@@ -76,6 +77,8 @@ namespace Nudge
 		 * @return Distance along ray to intersection point, or -1 if no intersection
 		 */
 		float CastAgainst(const Aabb& other) const;
+
+		float CastAgainst(const Mesh& other) const;
 
 		/**
 		 * @brief Performs ray-OBB intersection test

@@ -4,11 +4,10 @@
 
 namespace Nudge
 {
-	// Forward declarations to avoid circular dependencies
-	class Aabb;   // Axis-Aligned Bounding Box
-	class Obb;    // Oriented Bounding Box
-	class Plane;  // Geometric plane
-	class Sphere; // Geometric sphere
+	class Aabb;
+	class Obb;
+	class Plane;
+	class Sphere;
 
 	/**
 	 * @brief Represents a triangle in 3D space defined by three vertices
