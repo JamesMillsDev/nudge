@@ -5,7 +5,11 @@
 
 namespace Nudge
 {
+    class Aabb;
     class Mesh;
+    class Obb;
+    class Plane;
+    class Sphere;
 
     /**
      * @brief Node in a Bounding Volume Hierarchy (BVH) tree for spatial acceleration
@@ -143,5 +147,101 @@ namespace Nudge
          * @see BvhNode::Free() for cleanup when mesh is destroyed
          */
         void Accelerate();
+
+        /**
+ * @brief Tests if the mesh intersects with an Axis-Aligned Bounding Box
+ * @param other AABB to test intersection against
+ * @return True if any triangle in the mesh intersects or is contained within the AABB
+ *
+ * This method performs mesh-AABB intersection testing using the BVH acceleration
+ * structure if available, otherwise falls back to brute-force triangle iteration.
+ *
+ * Algorithm with BVH:
+ * 1. Traverse BVH tree, testing AABB against node bounds
+ * 2. Skip entire subtrees when node bounds don't intersect the query AABB
+ * 3. Test individual triangles only in leaf nodes that intersect
+ *
+ * Algorithm without BVH:
+ * 1. Iterate through all mesh triangles
+ * 2. Test each triangle against the AABB using SAT-based intersection
+ *
+ * @note Performance scales from O(n) to O(log n) average case with BVH acceleration
+ * @note Call Accelerate() first to build BVH for optimal performance on large meshes
+ * @see Triangle::Intersects(const Aabb&) for triangle-level intersection testing
+ * @see BvhNode for spatial acceleration structure details
+ */
+        bool Intersects(const Aabb& other) const;
+
+        /**
+         * @brief Tests if the mesh intersects with an Oriented Bounding Box
+         * @param other OBB to test intersection against
+         * @return True if any triangle in the mesh intersects or is contained within the OBB
+         *
+         * Similar to AABB intersection but handles arbitrarily oriented bounding boxes.
+         * The BVH traversal uses conservative AABB-OBB intersection tests to prune
+         * the search space before performing precise triangle-OBB intersection tests.
+         *
+         * Algorithm with BVH:
+         * 1. Traverse BVH using AABB-OBB intersection for node pruning
+         * 2. Test triangles in intersecting leaf nodes against the OBB
+         * 3. Early exit on first intersection found
+         *
+         * @note More expensive than AABB intersection due to arbitrary OBB orientation
+         * @note BVH acceleration provides significant speedup for complex meshes
+         * @see Triangle::Intersects(const Obb&) for triangle-OBB SAT testing
+         * @see Interval::TriangleObb() for the underlying SAT implementation
+         */
+        bool Intersects(const Obb& other) const;
+
+        /**
+         * @brief Tests if the mesh intersects with a plane
+         * @param other Plane to test intersection against
+         * @return True if any triangle in the mesh crosses, touches, or lies on the plane
+         *
+         * Plane intersection testing determines if the mesh is split by the plane.
+         * A mesh intersects a plane if any triangle has vertices on both sides of
+         * the plane or if any triangle lies exactly on the plane.
+         *
+         * Algorithm with BVH:
+         * 1. Traverse BVH testing node bounds against plane
+         * 2. A node intersects if its AABB spans both sides of the plane
+         * 3. Test triangles in intersecting leaf nodes for plane intersection
+         *
+         * Algorithm without BVH:
+         * 1. Iterate all triangles testing each against the plane
+         * 2. Use signed distance tests for triangle vertices
+         *
+         * @note Useful for frustum culling, CSG operations, and spatial partitioning
+         * @note BVH pruning is highly effective for plane tests due to spatial coherence
+         * @see Triangle::Intersects(const Plane&) for triangle-plane intersection
+         * @see Plane class for signed distance calculations
+         */
+        bool Intersects(const Plane& other) const;
+
+        /**
+         * @brief Tests if the mesh intersects with a sphere
+         * @param other Sphere to test intersection against
+         * @return True if any triangle in the mesh intersects or is contained within the sphere
+         *
+         * Sphere intersection testing checks if any part of the mesh lies within
+         * the spherical volume. This includes triangles that are fully contained,
+         * partially intersecting, or touching the sphere boundary.
+         *
+         * Algorithm with BVH:
+         * 1. Traverse BVH using AABB-sphere intersection for node pruning
+         * 2. Test triangles in intersecting leaf nodes against sphere
+         * 3. Early termination on first intersection found
+         *
+         * Triangle-sphere testing:
+         * 1. Find closest point on triangle to sphere center
+         * 2. Check if distance to closest point <= sphere radius
+         *
+         * @note Efficient for collision detection, proximity queries, and culling
+         * @note BVH acceleration essential for real-time performance on detailed meshes
+         * @see Triangle::Intersects(const Sphere&) for triangle-sphere testing
+         * @see Triangle::ClosestPoint() for point-triangle distance calculations
+         */
+        bool Intersects(const Sphere& other) const;
+
     };
 }

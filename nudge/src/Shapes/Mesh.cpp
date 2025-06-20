@@ -1,7 +1,14 @@
 #include "Nudge/Shapes/Mesh.hpp"
 
 #include "Nudge/Maths/MathF.hpp"
+#include "Nudge/Shapes/OBB.hpp"
+#include "Nudge/Shapes/Plane.hpp"
+#include "Nudge/Shapes/Sphere.hpp"
 #include "Nudge/Shapes/Triangle.hpp"
+
+#include <list>
+
+using std::list;
 
 // Configuration: Use octree subdivision (8 children per node)
 // Could be adjusted for different tree structures (binary = 2, quadtree = 4, etc.)
@@ -214,5 +221,278 @@ namespace Nudge
 		// Begin recursive subdivision with maximum depth of 3
 		// Depth 3 = up to 8^3 = 512 potential leaf nodes
 		accelerator->Split(this, 3);
+	}
+
+	/**
+ * @brief Tests if the mesh intersects with an Axis-Aligned Bounding Box
+ * @param other AABB to test intersection against
+ * @return True if any triangle in the mesh intersects the AABB
+ *
+ * Uses dual-path algorithm for optimal performance:
+ * - Accelerated path: BVH traversal with spatial pruning (O(log n) average)
+ * - Fallback path: Brute-force linear scan when no BVH available (O(n))
+ *
+ * The BVH traversal uses breadth-first search with spatial pruning to skip
+ * entire subtrees that don't intersect the query AABB, dramatically reducing
+ * the number of triangle tests required for large meshes.
+ */
+	bool Mesh::Intersects(const Aabb& other) const
+	{
+		// Fallback path: No acceleration structure available
+		if (accelerator == nullptr)
+		{
+			// Linear scan through all triangles
+			for (int i = 0; i < numTriangles; ++i)
+			{
+				if (triangles[i].Intersects(other))
+				{
+					return true;  // Early exit on first intersection
+				}
+			}
+		}
+		else
+		{
+			// Accelerated path: BVH traversal with spatial pruning
+			// Use breadth-first traversal with explicit processing queue
+			list<BvhNode*> toProcess;
+			toProcess.emplace_front(accelerator);
+
+			while (!toProcess.empty())
+			{
+				// Pop next node from processing queue
+				BvhNode* iterator = *toProcess.begin();
+				toProcess.erase(toProcess.begin());
+
+				// Test triangles in leaf nodes
+				if (iterator->numTriangles > 0)
+				{
+					for (int i = 0; i < iterator->numTriangles; ++i)
+					{
+						if (triangles[iterator->triangles[i]].Intersects(other))
+						{
+							return true;  // Early exit on intersection found
+						}
+					}
+				}
+
+				// Traverse children if this is an internal node
+				if (iterator->children != nullptr)
+				{
+					// Process children in reverse order for consistent traversal
+					for (int i = 8 - 1; i >= 0; --i)
+					{
+						// Spatial pruning: only traverse children that intersect query AABB
+						if (other.Intersects(iterator->children[i].bounds))
+						{
+							toProcess.emplace_front(&iterator->children[i]);
+						}
+					}
+				}
+			}
+		}
+
+		return false;  // No intersection found
+	}
+
+	/**
+	 * @brief Tests if the mesh intersects with an Oriented Bounding Box
+	 * @param other OBB to test intersection against
+	 * @return True if any triangle in the mesh intersects the OBB
+	 *
+	 * Similar to AABB intersection but handles arbitrarily oriented bounding boxes.
+	 * The BVH traversal uses conservative AABB-OBB intersection tests for spatial
+	 * pruning, then performs precise triangle-OBB intersection on candidate triangles.
+	 *
+	 * This is more computationally expensive than AABB testing due to the arbitrary
+	 * orientation requiring SAT-based intersection calculations.
+	 */
+	bool Mesh::Intersects(const Obb& other) const
+	{
+		if (accelerator == nullptr)
+		{
+			// Brute-force: Test all triangles against OBB
+			for (int i = 0; i < numTriangles; ++i)
+			{
+				if (triangles[i].Intersects(other))
+				{
+					return true;
+				}
+			}
+		}
+		else
+		{
+			// BVH traversal with OBB-AABB intersection pruning
+			list<BvhNode*> toProcess;
+			toProcess.emplace_front(accelerator);
+
+			while (!toProcess.empty())
+			{
+				BvhNode* iterator = *toProcess.begin();
+				toProcess.erase(toProcess.begin());
+
+				// Test triangles in current node
+				if (iterator->numTriangles > 0)
+				{
+					for (int i = 0; i < iterator->numTriangles; ++i)
+					{
+						if (triangles[iterator->triangles[i]].Intersects(other))
+						{
+							return true;
+						}
+					}
+				}
+
+				// Add children to processing queue with spatial pruning
+				if (iterator->children != nullptr)
+				{
+					for (int i = 8 - 1; i >= 0; --i)
+					{
+						// Test query OBB against child node bounds for pruning
+						if (other.Intersects(iterator->children[i].bounds))
+						{
+							toProcess.emplace_front(&iterator->children[i]);
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @brief Tests if the mesh intersects with a plane
+	 * @param other Plane to test intersection against
+	 * @return True if any triangle crosses, touches, or lies on the plane
+	 *
+	 * Plane intersection testing is highly useful for:
+	 * - Frustum culling in rendering systems
+	 * - CSG (Constructive Solid Geometry) operations
+	 * - Spatial partitioning and level-of-detail systems
+	 *
+	 * The BVH acceleration is particularly effective for plane tests since
+	 * entire spatial regions can be quickly classified as being on one side
+	 * of the plane or spanning across it.
+	 */
+	bool Mesh::Intersects(const Plane& other) const
+	{
+		if (accelerator == nullptr)
+		{
+			// Test all triangles against plane
+			for (int i = 0; i < numTriangles; ++i)
+			{
+				if (triangles[i].Intersects(other))
+				{
+					return true;
+				}
+			}
+		}
+		else
+		{
+			// BVH traversal with plane-AABB intersection pruning
+			list<BvhNode*> toProcess;
+			toProcess.emplace_front(accelerator);
+
+			while (!toProcess.empty())
+			{
+				BvhNode* iterator = *toProcess.begin();
+				toProcess.erase(toProcess.begin());
+
+				// Test triangles in leaf nodes
+				if (iterator->numTriangles > 0)
+				{
+					for (int i = 0; i < iterator->numTriangles; ++i)
+					{
+						if (triangles[iterator->triangles[i]].Intersects(other))
+						{
+							return true;
+						}
+					}
+				}
+
+				// Traverse children with spatial pruning
+				if (iterator->children != nullptr)
+				{
+					for (int i = 8 - 1; i >= 0; --i)
+					{
+						// Test plane against child bounds for spatial pruning
+						if (other.Intersects(iterator->children[i].bounds))
+						{
+							toProcess.emplace_front(&iterator->children[i]);
+						}
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @brief Tests if the mesh intersects with a sphere
+	 * @param other Sphere to test intersection against
+	 * @return True if any triangle intersects or is contained within the sphere
+	 *
+	 * Sphere intersection testing is essential for:
+	 * - Collision detection in physics systems
+	 * - Proximity queries and spatial analysis
+	 * - Bounding sphere culling for rendering optimization
+	 *
+	 * The triangle-sphere intersection uses closest point calculations, making
+	 * it more expensive than simpler shape tests but providing exact results
+	 * for complex geometric scenarios.
+	 */
+	bool Mesh::Intersects(const Sphere& other) const
+	{
+		if (accelerator == nullptr)
+		{
+			// Linear search through all triangles
+			for (int i = 0; i < numTriangles; ++i)
+			{
+				if (triangles[i].Intersects(other))
+				{
+					return true;
+				}
+			}
+		}
+		else
+		{
+			// BVH traversal with sphere-AABB intersection pruning
+			list<BvhNode*> toProcess;
+			toProcess.emplace_front(accelerator);
+
+			while (!toProcess.empty())
+			{
+				BvhNode* iterator = *toProcess.begin();
+				toProcess.erase(toProcess.begin());
+
+				// Test triangles in current node
+				if (iterator->numTriangles > 0)
+				{
+					for (int i = 0; i < iterator->numTriangles; ++i)
+					{
+						if (triangles[iterator->triangles[i]].Intersects(other))
+						{
+							return true;
+						}
+					}
+				}
+
+				// Add children with spatial pruning
+				if (iterator->children != nullptr)
+				{
+					for (int i = 8 - 1; i >= 0; --i)
+					{
+						// Test sphere against child bounds for spatial pruning
+						if (other.Intersects(iterator->children[i].bounds))
+						{
+							toProcess.emplace_front(&iterator->children[i]);
+						}
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 }
