@@ -76,7 +76,7 @@ namespace Nudge
 				// Count triangles that intersect this child's bounding box
 				for (int j = 0; j < numTriangles; ++j)
 				{
-					const Triangle t = mesh->triangles[triangles[j]];
+					const Triangle& t = mesh->triangles[triangles[j]];
 
 					if (t.Intersects(child.bounds))
 					{
@@ -97,7 +97,7 @@ namespace Nudge
 				int index = 0;
 				for (int j = 0; j < numTriangles; ++j)
 				{
-					const Triangle t = mesh->triangles[triangles[j]];
+					const Triangle& t = mesh->triangles[triangles[j]];
 
 					if (t.Intersects(child.bounds))
 					{
