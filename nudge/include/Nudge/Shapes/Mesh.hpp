@@ -149,27 +149,27 @@ namespace Nudge
         void Accelerate();
 
         /**
- * @brief Tests if the mesh intersects with an Axis-Aligned Bounding Box
- * @param other AABB to test intersection against
- * @return True if any triangle in the mesh intersects or is contained within the AABB
- *
- * This method performs mesh-AABB intersection testing using the BVH acceleration
- * structure if available, otherwise falls back to brute-force triangle iteration.
- *
- * Algorithm with BVH:
- * 1. Traverse BVH tree, testing AABB against node bounds
- * 2. Skip entire subtrees when node bounds don't intersect the query AABB
- * 3. Test individual triangles only in leaf nodes that intersect
- *
- * Algorithm without BVH:
- * 1. Iterate through all mesh triangles
- * 2. Test each triangle against the AABB using SAT-based intersection
- *
- * @note Performance scales from O(n) to O(log n) average case with BVH acceleration
- * @note Call Accelerate() first to build BVH for optimal performance on large meshes
- * @see Triangle::Intersects(const Aabb&) for triangle-level intersection testing
- * @see BvhNode for spatial acceleration structure details
- */
+		 * @brief Tests if the mesh intersects with an Axis-Aligned Bounding Box
+		 * @param other AABB to test intersection against
+		 * @return True if any triangle in the mesh intersects or is contained within the AABB
+		 *
+		 * This method performs mesh-AABB intersection testing using the BVH acceleration
+		 * structure if available, otherwise falls back to brute-force triangle iteration.
+		 *
+		 * Algorithm with BVH:
+		 * 1. Traverse BVH tree, testing AABB against node bounds
+		 * 2. Skip entire subtrees when node bounds don't intersect the query AABB
+		 * 3. Test individual triangles only in leaf nodes that intersect
+		 *
+		 * Algorithm without BVH:
+		 * 1. Iterate through all mesh triangles
+		 * 2. Test each triangle against the AABB using SAT-based intersection
+		 *
+		 * @note Performance scales from O(n) to O(log n) average case with BVH acceleration
+		 * @note Call Accelerate() first to build BVH for optimal performance on large meshes
+		 * @see Triangle::Intersects(const Aabb&) for triangle-level intersection testing
+		 * @see BvhNode for spatial acceleration structure details
+		 */
         bool Intersects(const Aabb& other) const;
 
         /**

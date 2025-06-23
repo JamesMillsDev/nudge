@@ -8,74 +8,40 @@
 
 namespace Nudge
 {
-	/**
-	 * @brief Default constructor - creates a unit line segment along Y-axis
-	 *
-	 * Creates a line from (0,0,0) to (0,1,0), providing a valid non-degenerate
-	 * line segment for default initialization.
-	 */
 	Line::Line()
 		: Line(Vector3{ 0.f }, Vector3{ 0.f, 1.f, 0.f })
 	{
 	}
 
-	/**
-	 * @brief Constructs a line segment between two specified points
-	 * @param start Starting endpoint of the line segment
-	 * @param end Ending endpoint of the line segment
-	 */
 	Line::Line(const Vector3& start, const Vector3& end)
 		: start{ start }, end{ end }
 	{
 	}
 
-	/**
-	 * @brief Calculates the length of the line segment
-	 * @return Euclidean distance between start and end points
-	 */
 	float Line::Length() const
 	{
+		// Use square root of squared length for efficiency
 		return MathF::Sqrt(LengthSqr());
 	}
 
-	/**
-	 * @brief Calculates the squared length of the line segment
-	 * @return Squared Euclidean distance between start and end points
-	 *
-	 * More efficient than Length() when comparing distances or when
-	 * the actual distance value isn't needed.
-	 */
 	float Line::LengthSqr() const
 	{
+		// Calculate vector from start to end and return its squared magnitude
 		return (start - end).MagnitudeSqr();
 	}
 
-	/**
-	 * @brief Tests if a point lies on the line segment
-	 * @param point Point to test for containment
-	 * @return True if the point lies on the line segment (within floating-point tolerance)
-	 *
-	 * Uses the closest point method to determine if the input point is effectively
-	 * on the line segment by checking if the distance is near zero.
-	 */
 	bool Line::Contains(const Vector3& point) const
 	{
+		// Find the closest point on the line segment to the test point
 		const Vector3 closest = ClosestPoint(point);
 
 		// Check if the closest point on the line is essentially the same as the input point
 		return MathF::IsNearZero((closest - point).MagnitudeSqr());
 	}
 
-	/**
-	 * @brief Finds the closest point on the line segment to a given point
-	 * @param point Reference point to find closest approach to
-	 * @return Point on the line segment that is closest to the input point
-	 *
-	 * Uses parametric line equation P(t) = start + t*(end-start) where t is clamped to [0,1]
-	 * to ensure the result lies within the line segment bounds.
-	 */
 	Vector3 Line::ClosestPoint(const Vector3& point) const
 	{
+		// Calculate the direction vector of the line segment
 		const Vector3 lVec = end - start;
 		const float lengthSqr = Vector3::Dot(lVec, lVec);
 
@@ -85,40 +51,49 @@ namespace Nudge
 			return start;  // Return either endpoint for degenerate line
 		}
 
+		// Calculate parameter t using projection, then clamp to [0,1] for line segment
 		const float t = MathF::Clamp01(Vector3::Dot(point - start, lVec) / lengthSqr);
+		// Interpolate along the line segment using the clamped parameter
 		return start + lVec * t;
 	}
 
 	bool Line::Test(const Aabb& other) const
 	{
+		// Create a ray from start point in direction of line segment
 		const Ray ray = { start, (end - start) };
 		RaycastHit hit;
 
+		// Perform raycast against the AABB
 		if (!ray.CastAgainst(other, &hit))
 		{
-			return false;
+			return false;  // No intersection with infinite ray
 		}
 
+		// Check if intersection occurs within the line segment bounds
 		const float t = hit.distance;
 		return t >= 0.f && MathF::Squared(t) <= LengthSqr();
 	}
 
 	bool Line::Test(const Obb& other) const
 	{
+		// Create a ray from start point in direction of line segment
 		const Ray ray = { start, (end - start) };
 		RaycastHit hit;
 
+		// Perform raycast against the OBB
 		if (!ray.CastAgainst(other, &hit))
 		{
-			return false;
+			return false;  // No intersection with infinite ray
 		}
 
+		// Check if intersection occurs within the line segment bounds
 		const float t = hit.distance;
 		return t >= 0.f && MathF::Squared(t) <= LengthSqr();
 	}
 
 	bool Line::Test(const Plane& other) const
 	{
+		// Calculate signed distances from both endpoints to the plane
 		const float distStart = Vector3::Dot(other.normal, start) - other.distance;
 	    const float distEnd = Vector3::Dot(other.normal, end) - other.distance;
 	    
@@ -129,20 +104,25 @@ namespace Nudge
 
 	bool Line::Test(const Sphere& other) const
 	{
+		// Find the closest point on the line segment to the sphere center
 		Vector3 closest = ClosestPoint(other.origin);
+		// Check if this closest point is within the sphere's radius
 		return closest.MagnitudeSqr() <= MathF::Squared(other.radius);
 	}
 
 	bool Line::Test(const Triangle& other) const
 	{
+		// Create a ray from start point in direction of line segment
 		const Ray ray = { start, (end - start) };
 		RaycastHit hit;
 
+		// Perform raycast against the triangle
 		if (!ray.CastAgainst(other, &hit))
 		{
-			return false;
+			return false;  // No intersection with infinite ray
 		}
 
+		// Check if intersection occurs within the line segment bounds
 		const float t = hit.distance;
 		// Use double precision for large value comparisons
 	    const double tSqr = static_cast<double>(t) * static_cast<double>(t);
