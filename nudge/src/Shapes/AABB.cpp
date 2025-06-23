@@ -44,8 +44,8 @@ namespace Nudge
 		const Vector3 min = Min();
 		const Vector3 max = Max();
 
-		return point.x > min.x && point.y > min.y && point.z > min.z &&
-		       point.x < max.x && point.y < max.y && point.z < max.z;
+		return point.x >= min.x && point.y >= min.y && point.z >= min.z &&
+		       point.x <= max.x && point.y <= max.y && point.z <= max.z;
 	}
 
 	Vector3 Aabb::ClosestPoint(const Vector3& point) const

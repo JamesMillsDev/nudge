@@ -69,7 +69,7 @@ namespace Nudge
 
 		// Check if the normalized vector from origin to point is parallel to ray direction
 		const Vector3 norm = (point - origin).Normalized();
-		return MathF::IsNearZero(Vector3::Dot(norm, direction));
+		return MathF::IsNearZero(MathF::Abs(Vector3::Dot(norm, direction)) - 1.f);
 	}
 
 	/**
@@ -203,7 +203,7 @@ namespace Nudge
 
 						if (hit.distance >= 0.f)
 						{
-							toProcess.emplace_front(iterator->children);
+							toProcess.emplace_front(&iterator->children[i]);
 						}
 					}
 				}
@@ -240,10 +240,10 @@ namespace Nudge
 		float t[6] = { 0.f, 0.f, 0.f, 0.f, 0.f, 0.f };
 		for (int i = 0; i < 3; ++i)
 		{
-			if (MathF::IsNearZero(f[0]))
+			if (MathF::IsNearZero(f[i]))
 			{
 				if (-e[i] - other.extents[i] > 0.f ||
-					-e.x + other.extents[i] < 0.f)
+					-e[i] + other.extents[i] < 0.f)
 				{
 					return false;
 				}
@@ -379,7 +379,7 @@ namespace Nudge
 		const Plane plane = Plane::From(tri);
 		RaycastHit planeHit;
 
-		if (CastAgainst(plane, &planeHit))
+		if (!CastAgainst(plane, &planeHit))
 		{
 			return false;
 		}

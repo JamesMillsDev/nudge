@@ -18,6 +18,12 @@ namespace Nudge
 	{
 	}
 
+	Triangle::Triangle(const Triangle& other)
+		: a{ other.a }, b{ other.b }, c{ other.c }
+	{
+
+	}
+
 	bool Triangle::Contains(const Vector3& point) const
 	{
 		const Vector3 triA = a - point;
@@ -125,5 +131,14 @@ namespace Nudge
 	bool Triangle::Intersects(const Triangle& other) const
 	{
 		return Interval::TriangleTriangle(*this, other);
+	}
+
+	Triangle& Triangle::operator=(const Triangle& rhs)
+	{
+		a = rhs.a;
+		b = rhs.b;
+		c = rhs.c;
+
+		return *this;
 	}
 }

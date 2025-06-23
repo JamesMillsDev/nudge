@@ -67,6 +67,8 @@ namespace Nudge
 		 */
 		Triangle(const Vector3& a, const Vector3& b, const Vector3& c);
 
+		Triangle(const Triangle& other);
+
 	public:
 		/**
 		 * @brief Tests if a point lies within the triangle
@@ -147,5 +149,9 @@ namespace Nudge
 		 * - Coplanar triangle overlap testing
 		 */
 		bool Intersects(const Triangle& other) const;
+
+	public:
+		Triangle& operator=(const Triangle& rhs);
+
 	};
 }

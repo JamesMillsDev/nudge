@@ -76,13 +76,17 @@ namespace Nudge
 	 */
 	Vector3 Line::ClosestPoint(const Vector3& point) const
 	{
-		const Vector3 lVec = end - start; // Line direction vector
-		const float t = MathF::Clamp01( // Clamp parameter to [0,1] for segment bounds
-		                               Vector3::Dot(point - start, lVec) / // Project point onto line direction
-		                               Vector3::Dot(lVec, lVec) // Normalize by line length squared
-		                              );
+		const Vector3 lVec = end - start;
+		const float lengthSqr = Vector3::Dot(lVec, lVec);
 
-		return start + lVec * t; // Return parameterized point on segment
+		// Handle degenerate case (zero-length line)
+		if (MathF::IsNearZero(lengthSqr))
+		{
+			return start;  // Return either endpoint for degenerate line
+		}
+
+		const float t = MathF::Clamp01(Vector3::Dot(point - start, lVec) / lengthSqr);
+		return start + lVec * t;
 	}
 
 	bool Line::Test(const Aabb& other) const
