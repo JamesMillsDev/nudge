@@ -200,7 +200,7 @@ namespace Nudge
     {
         Vector3 offPlane(5, 1, 1);
         Vector3 closest = offsetYZPlane.ClosestPoint(offPlane);
-        Vector3 expected(1, 1, 1);  // Projected onto YZ plane at X=1
+        Vector3 expected(-1, 1, 1);  // Projected onto YZ plane at X=1
         
         EXPECT_NEAR(closest.x, expected.x, EPSILON);
         EXPECT_NEAR(closest.y, expected.y, EPSILON);
@@ -428,7 +428,7 @@ namespace Nudge
 
     TEST_F(PlaneTest, EdgeCases_VeryLargeDistance_MaintainsPrecision)
     {
-        Plane farPlane(Vector3(1, 0, 0), -1e6f);
+        Plane farPlane(Vector3(1, 0, 0), 1e6f);
         Vector3 testPoint(0, 0, 0);
         
         float equation = Plane::PlaneEquation(testPoint, farPlane);

@@ -107,7 +107,7 @@ namespace Nudge
 
 		// Calculate barycentric coordinate for vertex A
 		// Project edge AB onto the perpendicular to edge CB
-		v = ab - Vector3::Project(ab, cb);
+		Vector3 v = ab - Vector3::Project(ab, cb);
 		const float av = 1.f - Vector3::Dot(v, ap) / Vector3::Dot(v, ab);
 
 		// Calculate barycentric coordinate for vertex B

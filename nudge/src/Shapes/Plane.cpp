@@ -30,7 +30,7 @@ namespace Nudge
 	}
 
 	Plane::Plane()
-		: Plane{ Vector3{ 1.f, 0.f, 0.f }, 0.f }
+		: Plane{ Vector3{ 0.f, 0.f, 0.f }, 0.f }
 	{
 	}
 
