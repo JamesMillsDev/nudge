@@ -10,7 +10,7 @@
 namespace Nudge
 {
 	Obb::Obb()
-		: Obb(Vector3{ 0.f }, Vector3{ 1.f })
+		: Obb(Vector3{ 0.f }, Vector3{ 0.f })
 	{
 	}
 

@@ -9,7 +9,7 @@
 namespace Nudge
 {
 	Triangle::Triangle()
-		: Triangle{ Vector3{ -1.f, 0.f, 0.f }, Vector3{ 0.f, 1.f, 0.f }, Vector3{ 1.f, 0.f, 0.f } }
+		: Triangle{ Vector3{ 0.f, 0.f, 0.f }, Vector3{ 0.f, 0.f, 0.f }, Vector3{ 0.f, 0.f, 0.f } }
 	{
 	}
 
@@ -30,11 +30,24 @@ namespace Nudge
 		const Vector3 triB = b - point;
 		const Vector3 triC = c - point;
 
+		if(MathF::Compare(Vector3::DistanceSqr(a, b), 0.f, MathF::epsilon) &&
+			MathF::Compare(Vector3::DistanceSqr(b, c), 0.f, MathF::epsilon) &&
+			!triA.IsNearZero(.00001f) && !triB.IsNearZero(.00001f) && !triC.IsNearZero(.00001f))
+		{
+			// Zero area triangle with point outside (all tri's aligned non zero)
+			return false;
+		}
+
 		const Vector3 normPbc = Vector3::Cross(triB, triC);
 		const Vector3 normPca = Vector3::Cross(triC, triA);
 		const Vector3 normPab = Vector3::Cross(triA, triB);
 
-		if (Vector3::Dot(normPbc, normPca) < 0.f || Vector3::Dot(normPbc, normPab) < 0.f)
+		if (Vector3::Dot(normPbc, normPca) < 0.f)
+		{
+			return false;
+		}
+
+		if(Vector3::Dot(normPbc, normPab) < 0.f)
 		{
 			return false;
 		}
@@ -70,8 +83,8 @@ namespace Nudge
 	Vector3 Triangle::Barycentric(const Vector3& point) const
 	{
 		const Vector3 ap = point - a;
-		const Vector3 bp = point - a;
-		const Vector3 cp = point - a;
+		const Vector3 bp = point - b;
+		const Vector3 cp = point - c;
 
 		const Vector3 ab = b - a;
 		const Vector3 ac = c - a;
@@ -79,7 +92,7 @@ namespace Nudge
 		const Vector3 cb = b - c;
 		const Vector3 ca = a - c;
 
-		Vector3 v = ab - Vector3::Project(ab, ac);
+		Vector3 v = ab - Vector3::Project(ab, cb);
 		const float av = 1.f - Vector3::Dot(v, ap) / Vector3::Dot(v, ab);
 
 		v = bc - Vector3::Project(bc, ac);
@@ -125,7 +138,7 @@ namespace Nudge
 	{
 		const Vector3 closest = ClosestPoint(other.origin);
 
-		return (closest - other.origin).MagnitudeSqr() < MathF::Squared(other.radius);
+		return (closest - other.origin).MagnitudeSqr() <= MathF::Squared(other.radius);
 	}
 
 	bool Triangle::Intersects(const Triangle& other) const

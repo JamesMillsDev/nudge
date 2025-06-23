@@ -185,7 +185,7 @@ namespace Nudge
 	void Mesh::Accelerate()
 	{
 		// Avoid rebuilding existing acceleration structure
-		if (accelerator != nullptr)
+		if (accelerator != nullptr || vertices == nullptr)
 		{
 			return;
 		}
@@ -244,7 +244,9 @@ namespace Nudge
 			// Linear scan through all triangles
 			for (int i = 0; i < numTriangles; ++i)
 			{
-				if (triangles[i].Intersects(other))
+				Triangle& tri = triangles[i];
+
+				if (tri.Intersects(other))
 				{
 					return true;  // Early exit on first intersection
 				}
@@ -449,7 +451,9 @@ namespace Nudge
 			// Linear search through all triangles
 			for (int i = 0; i < numTriangles; ++i)
 			{
-				if (triangles[i].Intersects(other))
+				Triangle& tri = triangles[i];
+
+				if (tri.Intersects(other))
 				{
 					return true;
 				}

@@ -91,7 +91,7 @@ namespace Nudge
 
 	bool Line::Test(const Aabb& other) const
 	{
-		const Ray ray = { start, (end - start).Normalized() };
+		const Ray ray = { start, (end - start) };
 		RaycastHit hit;
 
 		if (!ray.CastAgainst(other, &hit))
@@ -105,7 +105,7 @@ namespace Nudge
 
 	bool Line::Test(const Obb& other) const
 	{
-		const Ray ray = { start, (end - start).Normalized() };
+		const Ray ray = { start, (end - start) };
 		RaycastHit hit;
 
 		if (!ray.CastAgainst(other, &hit))
@@ -119,35 +119,23 @@ namespace Nudge
 
 	bool Line::Test(const Plane& other) const
 	{
-		const Ray ray = { start, (end - start).Normalized() };
-		RaycastHit hit;
-
-		if (!ray.CastAgainst(other, &hit))
-		{
-			return false;
-		}
-
-		const float t = hit.distance;
-		return t >= 0.f && MathF::Squared(t) <= LengthSqr();
+		const float distStart = Vector3::Dot(other.normal, start) - other.distance;
+	    const float distEnd = Vector3::Dot(other.normal, end) - other.distance;
+	    
+	    // Line intersects plane if endpoints are on opposite sides (different signs)
+	    // or if either endpoint lies exactly on the plane
+	    return (distStart * distEnd <= 0.f);
 	}
 
 	bool Line::Test(const Sphere& other) const
 	{
-		const Ray ray = { start, (end - start).Normalized() };
-		RaycastHit hit;
-
-		if (!ray.CastAgainst(other, &hit))
-		{
-			return false;
-		}
-
-		const float t = hit.distance;
-		return t >= 0.f && MathF::Squared(t) <= LengthSqr();
+		Vector3 closest = ClosestPoint(other.origin);
+		return closest.MagnitudeSqr() <= MathF::Squared(other.radius);
 	}
 
 	bool Line::Test(const Triangle& other) const
 	{
-		const Ray ray = { start, (end - start).Normalized() };
+		const Ray ray = { start, (end - start) };
 		RaycastHit hit;
 
 		if (!ray.CastAgainst(other, &hit))
@@ -156,6 +144,10 @@ namespace Nudge
 		}
 
 		const float t = hit.distance;
-		return t >= 0.f && MathF::Squared(t) <= LengthSqr();
+		// Use double precision for large value comparisons
+	    const double tSqr = static_cast<double>(t) * static_cast<double>(t);
+	    const double lengthSqr = static_cast<double>(LengthSqr());
+	    
+	    return t >= 0.f && tSqr <= lengthSqr;
 	}
 }

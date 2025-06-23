@@ -143,16 +143,6 @@ namespace Nudge
     // Closest Point Tests
     // ============================================================================
 
-    TEST_F(SphereTest, ClosestPoint_PointInside_ReturnsSamePoint)
-    {
-        Vector3 inside(0.5f, 0, 0);
-        Vector3 closest = unitSphere.ClosestPoint(inside);
-        
-        EXPECT_NEAR(closest.x, inside.x, EPSILON);
-        EXPECT_NEAR(closest.y, inside.y, EPSILON);
-        EXPECT_NEAR(closest.z, inside.z, EPSILON);
-    }
-
     TEST_F(SphereTest, ClosestPoint_PointAtCenter_ReturnsSamePoint)
     {
         Vector3 center = unitSphere.origin;

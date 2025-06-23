@@ -75,7 +75,7 @@ namespace Nudge
 
 		bool CastAgainst(const Aabb& other, RaycastHit* hit = nullptr) const;
 
-		float CastAgainst(const Mesh& other) const;
+		float CastAgainst(const Mesh& other);
 
 		bool CastAgainst(const Obb& other, RaycastHit* hit = nullptr) const;
 

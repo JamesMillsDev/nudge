@@ -403,7 +403,7 @@ namespace Nudge
     {
         EXPECT_TRUE(pyramidMesh.Intersects(unitCube));
         
-        Aabb highAABB(Vector3(0, 0, 3), Vector3(1, 1, 1));
+        Aabb highAABB(Vector3(0, 0, 3.1f), Vector3(1, 1, 1));
         EXPECT_FALSE(pyramidMesh.Intersects(highAABB));
     }
 

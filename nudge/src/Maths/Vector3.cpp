@@ -358,6 +358,11 @@ namespace Nudge
 		return MathF::IsNearZero(x) && MathF::IsNearZero(y) && MathF::IsNearZero(z);
 	}
 
+	bool Vector3::IsNearZero(float threshold) const
+	{
+		return MathF::IsNearZero(x, threshold) && MathF::IsNearZero(y, threshold) && MathF::IsNearZero(z, threshold);
+	}
+
 	/**
 	 * Checks if this vector has unit length (magnitude approximately 1)
 	 * @return True if the vector has unit length

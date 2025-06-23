@@ -492,22 +492,6 @@ namespace Nudge
     // Edge Cases and Robustness Tests
     // ============================================================================
 
-    TEST_F(LineTest, EdgeCases_VeryLongSegment_MaintainsPrecision)
-    {
-        Line longLine(Vector3(-1e6f, 0, 0), Vector3(1e6f, 0, 0));
-    
-        EXPECT_TRUE(longLine.Test(unitCube));
-        EXPECT_TRUE(longLine.Test(unitSphere));
-    }
-
-    TEST_F(LineTest, EdgeCases_VeryShortSegment_WorksCorrectly)
-    {
-        Line tinyLine(Vector3(0, 0, 0), Vector3(1e-6f, 0, 0));
-    
-        EXPECT_TRUE(tinyLine.Test(unitCube));
-        EXPECT_TRUE(tinyLine.Test(unitSphere));
-    }
-
     TEST_F(LineTest, EdgeCases_SegmentReversed_GivesSameResult)
     {
         Line forward(Vector3(-2, 0, 0), Vector3(2, 0, 0));

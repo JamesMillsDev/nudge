@@ -254,6 +254,8 @@ namespace Nudge
 		 */
 		bool IsZero() const;
 
+		bool IsNearZero(float threshold = FLT_EPSILON) const;
+
 		/**
 		 * @brief Checks if the vector has unit length.
 		 * @return True if the magnitude is approximately 1.0 within floating-point tolerance

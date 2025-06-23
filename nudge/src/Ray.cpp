@@ -34,6 +34,7 @@ namespace Nudge
 	Ray::Ray()
 		: Ray(Vector3{ 0.f }, Vector3{ 0.f, 0.f, 1.f })
 	{
+		Normalize();
 	}
 
 	/**
@@ -44,6 +45,7 @@ namespace Nudge
 	Ray::Ray(const Vector3& origin, const Vector3& direction)
 		: origin{ origin }, direction{ direction }
 	{
+		Normalize();
 	}
 
 	/**
@@ -52,6 +54,11 @@ namespace Nudge
 	void Ray::Normalize()
 	{
 		direction.Normalize();
+
+		if(direction.IsZero())
+		{
+			direction = { 0.f, 0.f, 1.f };
+		}
 	}
 
 	/**
@@ -157,7 +164,7 @@ namespace Nudge
 		return true;
 	}
 
-	float Ray::CastAgainst(const Mesh& other) const
+	float Ray::CastAgainst(const Mesh& other)
 	{
 		if (other.accelerator == nullptr)
 		{
