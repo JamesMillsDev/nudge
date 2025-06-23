@@ -11,6 +11,8 @@ namespace Nudge
 	class Sphere;
 	class Triangle;
 
+	struct RaycastHit;
+
 	/**
 	 * @brief Represents a ray in 3D space with an origin point and direction vector
 	 *
@@ -71,53 +73,20 @@ namespace Nudge
 		 */
 		Vector3 ClosestPoint(const Vector3& point) const;
 
-		/**
-		 * @brief Performs ray-AABB intersection test
-		 * @param other Axis-Aligned Bounding Box to test intersection against
-		 * @return Distance along ray to intersection point, or -1 if no intersection
-		 */
-		float CastAgainst(const Aabb& other) const;
+		bool CastAgainst(const Aabb& other, RaycastHit* hit = nullptr) const;
 
 		float CastAgainst(const Mesh& other) const;
 
-		/**
-		 * @brief Performs ray-OBB intersection test
-		 * @param other Oriented Bounding Box to test intersection against
-		 * @return Distance along ray to intersection point, or -1 if no intersection
-		 */
-		float CastAgainst(const Obb& other) const;
+		bool CastAgainst(const Obb& other, RaycastHit* hit = nullptr) const;
 
-		/**
-		 * @brief Performs ray-plane intersection test
-		 * @param other Plane to test intersection against
-		 * @return Distance along ray to intersection point, or -1 if no intersection
-		 */
-		float CastAgainst(const Plane& other) const;
+		bool CastAgainst(const Plane& other, RaycastHit* hit = nullptr) const;
 
-		/**
-		 * @brief Performs ray-sphere intersection test
-		 * @param other Sphere to test intersection against
-		 * @return Distance along ray to intersection point, or -1 if no intersection
-		 */
-		float CastAgainst(const Sphere& other) const;
+		bool CastAgainst(const Sphere& other, RaycastHit* hit = nullptr) const;
 
-		/**
-		 * @brief Performs ray-triangle intersection test using plane intersection and barycentric coordinates
-		 * @param tri Triangle to test intersection against
-		 * @return Distance along ray to intersection point, or -1 if no intersection
-		 *
-		 * This method uses a two-phase approach:
-		 * 1. First tests ray intersection with the triangle's containing plane
-		 * 2. Then validates that the intersection point lies within the triangle bounds
-		 *    using barycentric coordinate testing
-		 *
-		 * The returned distance can be used to calculate the exact intersection point:
-		 * intersectionPoint = ray.origin + ray.direction * returnedDistance
-		 *
-		 * @note This is more expensive than basic primitive tests due to the barycentric
-		 *       coordinate calculation, but provides precise triangle intersection detection
-		 * @see CastAgainst(const Plane&) for the underlying plane intersection logic
-		 */
-		float CastAgainst(const Triangle& tri) const;
+		bool CastAgainst(const Triangle& tri, RaycastHit* hit = nullptr) const;
+
+	private:
+		static void ResetHit(RaycastHit* hit);
+
 	};
 }

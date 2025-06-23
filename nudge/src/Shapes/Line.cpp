@@ -1,8 +1,9 @@
 #include "Nudge/Shapes/Line.hpp"
 
+#include "Nudge/Ray.hpp"
+#include "Nudge/RaycastHit.hpp"
 #include "Nudge/Maths/MathF.hpp"
 #include "Nudge/Shapes/Plane.hpp"
-#include "Nudge/Shapes/Ray.hpp"
 #include "Nudge/Shapes/Sphere.hpp"
 
 namespace Nudge
@@ -84,105 +85,73 @@ namespace Nudge
 		return start + lVec * t; // Return parameterized point on segment
 	}
 
-	/**
-	 * @brief Tests if the line segment intersects with an Axis-Aligned Bounding Box
-	 * @param other AABB to test intersection against
-	 * @return True if the line segment intersects the AABB
-	 */
 	bool Line::Test(const Aabb& other) const
 	{
-		// Create ray from line start in line direction
 		const Ray ray = { start, (end - start).Normalized() };
-		const float t = ray.CastAgainst(other); // Get intersection distance
-		const float tSqr = MathF::Squared(t);
+		RaycastHit hit;
 
-		return t >= 0.f && tSqr <= LengthSqr(); // Check if intersection is within segment bounds
-	}
-
-	/**
-	 * @brief Tests if the line segment intersects with an Oriented Bounding Box
-	 * @param other OBB to test intersection against
-	 * @return True if the line segment intersects the OBB
-	 */
-	bool Line::Test(const Obb& other) const
-	{
-		// Create ray from line start in line direction
-		const Ray ray = { start, (end - start).Normalized() };
-		const float t = ray.CastAgainst(other); // Get intersection distance
-		const float tSqr = MathF::Squared(t);
-
-		return t >= 0.f && tSqr <= LengthSqr(); // Check if intersection is within segment bounds
-	}
-
-	/**
-	 * @brief Tests if the line segment intersects with a plane
-	 * @param other Plane to test intersection against
-	 * @return True if the line segment crosses the plane
-	 *
-	 * Uses parametric line-plane intersection. Returns false if line is parallel to plane.
-	 */
-	bool Line::Test(const Plane& other) const
-	{
-		const Vector3 ab = end - start; // Line direction vector
-
-		const float nA = Vector3::Dot(other.normal, start); // Distance from plane to line start
-		const float nAB = Vector3::Dot(other.normal, ab);   // Projection of line direction onto plane normal
-
-		// Check if line is parallel to plane (no intersection)
-		if (MathF::IsNearZero(nAB))
+		if (!ray.CastAgainst(other, &hit))
 		{
 			return false;
 		}
 
-		// Calculate intersection parameter: solve dot(start + t*ab, normal) = distance
-		const float t = (other.distance - nA) / nAB;
-
-		// Intersection occurs within line segment if t <= [0,1]
-		return t >= 0.f && t <= 1.f;
+		const float t = hit.distance;
+		return t >= 0.f && MathF::Squared(t) <= LengthSqr();
 	}
 
-	/**
-	 * @brief Tests if the line segment intersects with a sphere
-	 * @param other Sphere to test intersection against
-	 * @return True if the line segment intersects or passes through the sphere
-	 *
-	 * Finds the closest point on the line segment to the sphere center and checks
-	 * if that distance is within the sphere radius.
-	 */
+	bool Line::Test(const Obb& other) const
+	{
+		const Ray ray = { start, (end - start).Normalized() };
+		RaycastHit hit;
+
+		if (!ray.CastAgainst(other, &hit))
+		{
+			return false;
+		}
+
+		const float t = hit.distance;
+		return t >= 0.f && MathF::Squared(t) <= LengthSqr();
+	}
+
+	bool Line::Test(const Plane& other) const
+	{
+		const Ray ray = { start, (end - start).Normalized() };
+		RaycastHit hit;
+
+		if (!ray.CastAgainst(other, &hit))
+		{
+			return false;
+		}
+
+		const float t = hit.distance;
+		return t >= 0.f && MathF::Squared(t) <= LengthSqr();
+	}
+
 	bool Line::Test(const Sphere& other) const
 	{
-		const Vector3 closest = ClosestPoint(other.origin);         // Closest point on line to sphere center
-		const float radii = MathF::Squared(other.radius);           // Sphere radius squared
-		const float dist = (other.origin - closest).MagnitudeSqr(); // Distance squared from sphere center to line
+		const Ray ray = { start, (end - start).Normalized() };
+		RaycastHit hit;
 
-		// Intersection occurs if closest distance is within sphere radius
-		return dist <= radii;
+		if (!ray.CastAgainst(other, &hit))
+		{
+			return false;
+		}
+
+		const float t = hit.distance;
+		return t >= 0.f && MathF::Squared(t) <= LengthSqr();
 	}
 
-	/**
-	 * @brief Tests if the line segment intersects with a triangle
-	 * @param other Triangle to test intersection against
-	 * @return True if the line segment intersects the triangle
-	 *
-	 * Algorithm:
-	 * 1. Convert line segment to ray starting at line's start point
-	 * 2. Perform ray-triangle intersection to get hit distance
-	 * 3. Check if intersection point lies within the line segment bounds
-	 */
 	bool Line::Test(const Triangle& other) const
 	{
-		// Create ray from line segment's start point in the direction toward end point
-		const Ray ray =
+		const Ray ray = { start, (end - start).Normalized() };
+		RaycastHit hit;
+
+		if (!ray.CastAgainst(other, &hit))
 		{
-			start,                      // Ray origin at line segment start
-			(end - start).Normalized()  // Normalized direction vector toward end point
-		};
+			return false;
+		}
 
-		// Perform ray-triangle intersection test
-		// Returns distance along ray to intersection point, or -1 if no intersection
-		const float t = ray.CastAgainst(other);
-
-		// Check if intersection exists and lies within line segment bounds
+		const float t = hit.distance;
 		return t >= 0.f && MathF::Squared(t) <= LengthSqr();
 	}
 }
