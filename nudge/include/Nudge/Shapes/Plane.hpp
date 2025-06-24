@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Nudge/Maths/Vector3.hpp"
+#include "Nudge/Shapes/Shape.hpp"
 
 namespace Nudge
 {
@@ -12,7 +13,7 @@ namespace Nudge
 	/**
 	 * @brief 3D plane class for geometric calculations and collision detection
 	 */
-	class Plane
+	class Plane : public Shape
 	{
 	public:
 		/**
@@ -60,14 +61,14 @@ namespace Nudge
 		 * @param point The point to test
 		 * @return True if the point is on the plane (within floating point tolerance)
 		 */
-		bool Contains(const Vector3& point) const;
+		bool Contains(const Vector3& point) const override;
 		
 		/**
 		 * @brief Returns the closest point on the plane to the given point
 		 * @param point The point to find the closest point to
 		 * @return The closest point on the plane (orthogonal projection)
 		 */
-		Vector3 ClosestPoint(const Vector3& point) const;
+		Vector3 ClosestPoint(const Vector3& point) const override;
 
 		/**
 		 * @brief Checks if this plane intersects with an Axis-Aligned Bounding Box

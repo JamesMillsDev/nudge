@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Nudge/Maths/Vector3.hpp"
+#include "Nudge/Shapes/Shape.hpp"
 
 namespace Nudge
 {
@@ -12,7 +13,7 @@ namespace Nudge
 	/**
 	 * @brief Axis-Aligned Bounding Box (AABB) class for 3D collision detection and spatial queries
 	 */
-	class Aabb
+	class Aabb : public Shape
 	{
 	public:
 		/**
@@ -65,14 +66,14 @@ namespace Nudge
 		 * @param point The point to test for containment
 		 * @return True if the point is inside or on the boundary of the AABB
 		 */
-		bool Contains(const Vector3& point) const;
+		bool Contains(const Vector3& point) const override;
 		
 		/**
 		 * @brief Returns the closest point on or inside the AABB to the given point
 		 * @param point The point to find the closest point to
 		 * @return The closest point on or inside the AABB
 		 */
-		Vector3 ClosestPoint(const Vector3& point) const;
+		Vector3 ClosestPoint(const Vector3& point) const override;
 
 		/**
 		 * @brief Checks if this AABB intersects with another AABB

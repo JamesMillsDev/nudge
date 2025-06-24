@@ -2,6 +2,7 @@
 
 #include "Nudge/Maths/Matrix3.hpp"
 #include "Nudge/Maths/Vector3.hpp"
+#include "Nudge/Shapes/Shape.hpp"
 
 namespace Nudge
 {
@@ -13,7 +14,7 @@ namespace Nudge
 	/**
 	 * @brief Oriented Bounding Box (OBB) class for 3D collision detection with arbitrary rotation
 	 */
-	class Obb
+	class Obb : public Shape
 	{
 	public:
 		/**
@@ -58,14 +59,14 @@ namespace Nudge
 		 * @param point The point to test for containment
 		 * @return True if the point is inside or on the boundary of the OBB
 		 */
-		bool Contains(const Vector3& point) const;
+		bool Contains(const Vector3& point) const override;
 		
 		/**
 		 * @brief Returns the closest point on or inside the OBB to the given point
 		 * @param point The point to find the closest point to
 		 * @return The closest point on or inside the OBB
 		 */
-		Vector3 ClosestPoint(const Vector3& point) const;
+		Vector3 ClosestPoint(const Vector3& point) const override;
 
 		/**
 		 * @brief Checks if this OBB intersects with an Axis-Aligned Bounding Box

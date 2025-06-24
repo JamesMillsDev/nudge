@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Nudge/Maths/Vector3.hpp"
+#include "Nudge/Shapes/Shape.hpp"
 
 namespace Nudge
 {
@@ -12,7 +13,7 @@ namespace Nudge
 	/**
 	 * @brief 3D triangle class for geometric calculations and collision detection
 	 */
-	class Triangle
+	class Triangle : public Shape
 	{
 	public:
 		union
@@ -72,14 +73,14 @@ namespace Nudge
 		 * @param point The point to test for containment
 		 * @return True if the point is inside the triangle (coplanar and within bounds)
 		 */
-		bool Contains(const Vector3& point) const;
+		bool Contains(const Vector3& point) const override;
 
 		/**
 		 * @brief Returns the closest point on the triangle to the given point
 		 * @param point The point to find the closest point to
 		 * @return The closest point on the triangle surface (vertex, edge, or face)
 		 */
-		Vector3 ClosestPoint(const Vector3& point) const;
+		Vector3 ClosestPoint(const Vector3& point) const override;
 
 		/**
 		 * @brief Calculates the barycentric coordinates of a point relative to the triangle

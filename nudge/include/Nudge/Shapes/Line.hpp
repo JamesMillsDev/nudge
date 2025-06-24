@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Nudge/Maths/Vector3.hpp"
+#include "Nudge/Shapes/Shape.hpp"
 
 namespace Nudge
 {
@@ -20,7 +21,7 @@ namespace Nudge
 	 * - Geometric queries (point containment, closest point calculation)
 	 * - Intersection testing with various geometric primitives
 	 */
-	class Line
+	class Line : public Shape
 	{
 	public:
 		Vector3 start;  ///< Starting endpoint of the line segment
@@ -67,7 +68,7 @@ namespace Nudge
 		 * The point must lie between the start and end points to be considered
 		 * contained within the line segment.
 		 */
-		bool Contains(const Vector3& point) const;
+		bool Contains(const Vector3& point) const override;
 
 		/**
 		 * @brief Finds the closest point on the line segment to a given point
@@ -77,7 +78,7 @@ namespace Nudge
 		 * The returned point will always lie between the start and end points
 		 * (inclusive) of the line segment.
 		 */
-		Vector3 ClosestPoint(const Vector3& point) const;
+		Vector3 ClosestPoint(const Vector3& point) const override;
 
 		/**
 		 * @brief Tests if the line segment intersects with an Axis-Aligned Bounding Box

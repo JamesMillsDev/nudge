@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Nudge/Maths/Vector3.hpp"
+#include "Nudge/Shapes/Shape.hpp"
 
 namespace Nudge
 {
@@ -12,7 +13,7 @@ namespace Nudge
 	/**
 	 * @brief 3D sphere class for collision detection and geometric calculations
 	 */
-	class Sphere
+	class Sphere : public Shape
 	{
 	public:
 		/**
@@ -44,14 +45,14 @@ namespace Nudge
 		 * @param point The point to test for containment
 		 * @return True if the point is inside or on the surface of the sphere
 		 */
-		bool Contains(const Vector3& point) const;
+		bool Contains(const Vector3& point) const override;
 		
 		/**
 		 * @brief Returns the closest point on the sphere surface to the given point
 		 * @param point The point to find the closest point to
 		 * @return The closest point on the sphere surface (or the point itself if inside)
 		 */
-		Vector3 ClosestPoint(const Vector3& point) const;
+		Vector3 ClosestPoint(const Vector3& point) const override;
 
 		/**
 		 * @brief Checks if this sphere intersects with another sphere
